@@ -6,7 +6,7 @@ public class Player extends Controllable implements Dashing {
 	static final int MOVESPEED = 2;
 	static final int DIRECTIONTHRESHOLD = 90;
 	static final int TURNSPEED = 15;
-	static final double TIMESCALE = 1;
+	static final double TIMESCALE = 0.1;
 	static final int DASHCOOLDOWN = 10;
 	static final int DASHLENGTH = 2;
 	static final int DASHSPEED = 50;
@@ -27,7 +27,6 @@ public class Player extends Controllable implements Dashing {
 	public void tick(int direction) {
 		if (isDashing()) {
 			dashTick();
-			System.out.println("hi");
 		} else {
 			setMaxSpeed(MAXSPEED);
 			super.tick(direction);

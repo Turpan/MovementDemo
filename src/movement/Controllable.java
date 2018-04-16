@@ -63,7 +63,7 @@ public abstract class Controllable extends Moveable {
 	}
 	private void turnHandling(int direction) {
 		if (getDirection() != direction) {
-			if (getSpeed() == 0) {
+			if (stopped) {
 				setDirection(direction);
 			} else {
 				turn(direction);

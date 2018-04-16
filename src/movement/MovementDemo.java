@@ -31,7 +31,7 @@ public class MovementDemo implements KeyListener, ActionListener{
 		playerLabel = new JPanel();
 		playerLabel.setBackground(Color.GREEN);
 		player = new Player();
-		tickTimer = new Timer(100, this);
+		tickTimer = new Timer(10, this);
 		tickTimer.start();
 		player.setPositionX(300);
 		player.setPositionY(300);
