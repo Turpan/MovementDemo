@@ -37,7 +37,6 @@ public abstract class Controllable extends Moveable {
 		} else if (direction != getDirection() && acceptableDirectionChange(direction)) {
 			movementTick(direction);
 		} else if (direction != getDirection() && stopped) {
-			setDirection(direction);
 			movementTick(direction);
 		} else {
 			stopTick();
@@ -60,10 +59,11 @@ public abstract class Controllable extends Moveable {
 		turnHandling(direction);
 		setAcceleration(moveSpeed);
 		move();
+		System.out.println(getPositionX() + "," + getPositionY());
 	}
 	private void turnHandling(int direction) {
 		if (getDirection() != direction) {
-			if (stopped) {
+			if (getSpeed() == 0) {
 				setDirection(direction);
 			} else {
 				turn(direction);

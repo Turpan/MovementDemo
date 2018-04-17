@@ -11,9 +11,9 @@ import javax.swing.Timer;
 
 public class MovementDemo implements KeyListener, ActionListener{
 	static final int[][] directionTable = new int[][]
-			{{224, 269, 314},
-			{179, -1, 0},
-			{134, 89, 44}};
+			{{225, 270, 315},
+			{180, -1, 0},
+			{135, 90, 45}};
 	boolean rightKey;
 	boolean leftKey;
 	boolean upKey;
@@ -90,7 +90,7 @@ public class MovementDemo implements KeyListener, ActionListener{
 		} else {
 			player.stopTick();
 		}
-		playerLabel.setBounds(player.getPositionX(), player.getPositionY(), 50, 50);
+		playerLabel.setBounds((int) Math.round(player.getPositionX()), (int) Math.round(player.getPositionY()), 50, 50);
 		playerLabel.setBackground((player.canDash()) ? Color.GREEN : Color.RED);
 		DemoMain.mainPanel.repaint();
 	}

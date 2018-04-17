@@ -1,18 +1,18 @@
 package movement;
 
 public abstract class Entity {
-	int positionX;
-	int positionY;
-	void setPositionX(int positionX) {
+	double positionX;
+	double positionY;
+	void setPositionX(double positionX) {
 		this.positionX = positionX;
 	}
-	void setPositionY(int positionY) {
+	void setPositionY(double positionY) {
 		this.positionY = positionY;
 	}
-	public int getPositionX() {
+	public double getPositionX() {
 		return positionX;
 	}
-	public int getPositionY() {
+	public double getPositionY() {
 		return positionY;
 	}
 }

@@ -35,8 +35,7 @@ public abstract class Moveable extends Entity {
 		return acceleration;
 	}
 	protected void setDirection(double direction) {
-		direction = adjustDegrees(direction);
-		this.direction = direction;
+		this.direction = adjustDegrees(direction);
 	}
 	protected void setMaxSpeed(int maxSpeed) {
 		if (maxSpeed < 0) {
@@ -62,8 +61,8 @@ public abstract class Moveable extends Entity {
 		return getSpeed() + (getAcceleration() * getTimeScale());
 	}
 	protected void calculatePosition() {
-		setPositionX((int) (getPositionX() + (getSpeed() * getTimeScale() * Math.cos(Math.toRadians(getDirection())))));
-		setPositionY((int) (getPositionY() + (getSpeed() * getTimeScale() * Math.sin(Math.toRadians(getDirection())))));
+		setPositionX((getPositionX() + (getSpeed() * getTimeScale() * Math.cos(Math.toRadians(getDirection())))));
+		setPositionY((getPositionY() + (getSpeed() * getTimeScale() * Math.sin(Math.toRadians(getDirection())))));
 	}
 	public void move() {
 		calculateSpeed();
@@ -76,9 +75,9 @@ public abstract class Moveable extends Entity {
 			setDirection(direction);
 			return;
 		}
-		if (distance < 0) { //positive
+		if (distance < 0) { //negative
 			setDirection(adjustDegrees(getDirection() + (0-getTurnSpeed() * getTimeScale())));
-		} else { //negative
+		} else { //positive
 			setDirection(adjustDegrees(getDirection() + (getTurnSpeed() * getTimeScale())));
 		}
 	}
