@@ -6,8 +6,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JPanel;
+import javax.swing.ImageIcon;
 import javax.swing.Timer;
+
+import paintedPanel.PaintedPanel;
 
 public class MovementDemo implements KeyListener, ActionListener{
 	static final int[][] directionTable = new int[][]
@@ -18,7 +20,8 @@ public class MovementDemo implements KeyListener, ActionListener{
 	boolean leftKey;
 	boolean upKey;
 	boolean downKey;
-	JPanel playerLabel;
+	int counter;
+	PaintedPanel playerLabel;
 	Player player;
 	Timer tickTimer;
 	MovementDemo() {
@@ -28,9 +31,10 @@ public class MovementDemo implements KeyListener, ActionListener{
 	private void createVariables() {
 		DemoMain.frame.requestFocus();
 		DemoMain.frame.addKeyListener(this);
-		playerLabel = new JPanel();
+		playerLabel = new PaintedPanel();
 		playerLabel.setBackground(Color.GREEN);
 		player = new Player();
+		playerLabel.bgImage = new ImageIcon(player.getSprite());
 		tickTimer = new Timer(10, this);
 		tickTimer.start();
 		player.setPositionX(300);
@@ -85,13 +89,15 @@ public class MovementDemo implements KeyListener, ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		counter ++;
 		if ((rightKey || leftKey || upKey || downKey) && calculateDirection() > -1) {
 			player.tick(calculateDirection());
 		} else {
 			player.stopTick();
 		}
-		playerLabel.setBounds((int) Math.round(player.getPositionX()), (int) Math.round(player.getPositionY()), 50, 50);
+		playerLabel.setBounds((int) Math.round(player.getPositionX()), (int) Math.round(player.getPositionY()), player.getWidth(), player.getHeight());
 		playerLabel.setBackground((player.canDash()) ? Color.GREEN : Color.RED);
 		DemoMain.mainPanel.repaint();
+		if (counter % 200 == 0) player.stagger();
 	}
 }

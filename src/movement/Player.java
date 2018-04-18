@@ -1,6 +1,12 @@
 package movement;
 
-public class Player extends Controllable implements Dashing {
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class Player extends Controllable implements Dashing, Collidable, Staggerable {
 	static final int MAXSPEED = 20;
 	static final int STOPSPEED = 5;
 	static final int MOVESPEED = 2;
@@ -10,10 +16,12 @@ public class Player extends Controllable implements Dashing {
 	static final int DASHCOOLDOWN = 10;
 	static final int DASHLENGTH = 2;
 	static final int DASHSPEED = 50;
+	static final int STAGGERSPEED = 100;
 	int dashCoolDown;
 	double dashDirection;
 	double dashCounter;
 	double dashCoolDownCount;
+	int staggerSpeed;
 	public Player() {
 		setMaxSpeed(MAXSPEED);
 		setStopSpeed(STOPSPEED);
@@ -22,6 +30,17 @@ public class Player extends Controllable implements Dashing {
 		setTurnSpeed(TURNSPEED);
 		setTimeScale(TIMESCALE);
 		setDashCoolDown(DASHCOOLDOWN);
+		setStaggerSpeed(STAGGERSPEED);
+		loadImage();
+	}
+	public void loadImage() {
+		BufferedImage img = null;
+		try {
+		    img = ImageIO.read(new File("graphics/funnyman.png"));
+		} catch (IOException e) {
+			System.exit(1);
+		}
+		setSprite(img);
 	}
 	@Override
 	public void tick(int direction) {
@@ -101,6 +120,21 @@ public class Player extends Controllable implements Dashing {
 		setDashDirection(direction);
 		setDashCoolDownCount(getDashCoolDown());
 		setDashCounter(DASHLENGTH);
+	}
+	@Override
+	public void setStaggerSpeed(int staggerSpeed) {
+		if (staggerSpeed < 0) {
+			staggerSpeed = 0;
+		}
+		this.staggerSpeed = staggerSpeed;
+	}
+	@Override
+	public int getStaggerSpeed() {
+		return staggerSpeed;
+	}
+	@Override
+	public void stagger() {
+		setSpeed(0-getStaggerSpeed());
 	}
 
 }
