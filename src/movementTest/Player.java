@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import movement.Collidable;
 import movement.Controllable;
 import movement.Dashing;
+import movement.Enemy;
+import movement.Entity;
 import movement.Staggerable;
 import movement.Velocity;
 
@@ -49,7 +51,14 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		} catch (IOException e) {
 			System.exit(1);
 		}
+		BufferedImage img2 = null;
+		try {
+			img2 = ImageIO.read(new File("graphics/funnyman-bitmask.png"));
+		} catch (IOException e) {
+			System.exit(1);
+		}
 		setSprite(img);
+		setCollisionMap(img2);
 	}
 	@Override
 	public void tick(int direction) {
@@ -157,5 +166,11 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		stagger.setSpeed(getStaggerSpeed());
 		stagger.setTimeScale(getTimeScale());
 		addVelocity(stagger);
+	}
+	@Override
+	public void collisionWith(Entity entity) {
+		if (entity instanceof Enemy) {
+			System.out.println("crash into enemy");
+		}
 	}
 }

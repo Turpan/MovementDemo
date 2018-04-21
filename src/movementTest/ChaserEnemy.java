@@ -33,6 +33,13 @@ public class ChaserEnemy extends Enemy{
 		} catch (IOException e) {
 			System.exit(1);
 		}
+		BufferedImage img2 = null;
+		try {
+		    img2 = ImageIO.read(new File("graphics/evilman-bitmask.png"));
+		} catch (IOException e) {
+			System.exit(1);
+		}
 		setSprite(img);
+		setCollisionMap(img2);
 	}
 }

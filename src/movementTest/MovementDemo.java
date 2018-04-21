@@ -1,15 +1,18 @@
 package movementTest;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
+import movement.CollisionEngine;
+import movement.Entity;
 import movement.GameListener;
 import paintedPanel.PaintedPanel;
 
@@ -28,6 +31,8 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 	Player player;
 	ChaserEnemy chaser;
 	Timer tickTimer;
+	List<Entity> roomContents = new ArrayList<Entity>();
+	CollisionEngine collisionCheck;
 	MovementDemo() {
 		createVariables();
 	}
@@ -36,16 +41,17 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		DemoMain.frame.requestFocus();
 		DemoMain.frame.addKeyListener(this);
 		playerLabel = new PaintedPanel();
-		playerLabel.setBackground(Color.GREEN);
+		playerLabel.setOpaque(false);
 		player = new Player();
 		playerLabel.bgImage = new ImageIcon(player.getSprite());
 		tickTimer = new Timer(10, this);
+		collisionCheck = new CollisionEngine();
 		player.setPositionX(0);
 		player.setPositionY(0);
 		playerLabel.setBounds(0, 0, 50, 50);
 		chaserLabel = new PaintedPanel();
 		chaserLabel.setOpaque(false);
-		ChaserAI ai = new ChaserAI(this);
+		var ai = new ChaserAI(this);
 		chaser = new ChaserEnemy(ai);
 		chaser.setPositionX(300);
 		chaser.setPositionY(300);
@@ -53,6 +59,8 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		chaserLabel.setBounds(300, 300, 20, 20);
 		DemoMain.mainPanel.add(playerLabel);
 		DemoMain.mainPanel.add(chaserLabel);
+		roomContents.add(player);
+		roomContents.add(chaser);
 		tickTimer.start();
 	}
 	int calculateDirection() {
@@ -109,9 +117,9 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 			player.stopTick();
 		}
 		chaser.tick();
+		collisionCheck.checkCollision(roomContents);
 		chaserLabel.setBounds((int) Math.round(chaser.getPositionX()), (int) Math.round(chaser.getPositionY()), chaser.getWidth(), chaser.getHeight());
 		playerLabel.setBounds((int) Math.round(player.getPositionX()), (int) Math.round(player.getPositionY()), player.getWidth(), player.getHeight());
-		playerLabel.setBackground((player.canDash()) ? Color.GREEN : Color.RED);
 		DemoMain.mainPanel.repaint();
 		
 	}

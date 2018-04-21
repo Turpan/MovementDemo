@@ -67,7 +67,7 @@ public abstract class Controllable extends Moveable {
 	}
 	@Override
 	public void move() {
-		Velocity velocity = new Velocity();
+		var velocity = new Velocity();
 		velocity.setDirection((int) getDirection());
 		velocity.setSpeed(getSpeed());
 		calculatePosition(velocity);
