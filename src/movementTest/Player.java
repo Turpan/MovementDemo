@@ -24,7 +24,7 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 	static final int DASHCOOLDOWN = 10;
 	static final int DASHLENGTH = 2;
 	static final int DASHSPEED = 50;
-	static final int STAGGERSPEED = 20;
+	static final int STAGGERSPEED = 10;
 	static final int STAGGERDECAY = 2;
 	int dashCoolDown;
 	double dashDirection;
@@ -128,6 +128,7 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		setMaxSpeed(DASHSPEED);
 		setAcceleration(DASHSPEED);
 		setDashCounter(getDashCounter() - getTimeScale());
+		setSpeed(getNextSpeed());
 		move();
 	}
 	@Override
@@ -170,7 +171,8 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 	@Override
 	public void collisionWith(Entity entity) {
 		if (entity instanceof Enemy) {
-			System.out.println("crash into enemy");
+			var enemy = (Enemy) entity;
+			stagger((int) adjustDegrees(enemy.getDirection()));
 		}
 	}
 }

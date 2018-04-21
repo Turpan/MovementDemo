@@ -84,7 +84,7 @@ public abstract class Controllable extends Moveable {
 			stopTick();
 		}
 	}
-	private double getNextSpeed() {
+	public double getNextSpeed() {
 		return getSpeed() + (getAcceleration() * getTimeScale());
 	}
 	public void stopTick() {

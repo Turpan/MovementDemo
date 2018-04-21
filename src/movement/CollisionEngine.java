@@ -44,7 +44,7 @@ public class CollisionEngine {
 				if (entity1Pixel.equals(bitMaskColor) && entity2Pixel.equals(bitMaskColor)) {
 					return true;
 				}*/
-				System.out.println("Checked pixel: " + i + "," + j);
+				return true;
 			}
 		}
 		return false;
