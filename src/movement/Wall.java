@@ -1,8 +1,8 @@
 package movement;
 
 public abstract class Wall extends Entity implements Bouncy {
-	static double bounciness;
-	static int angle;
+	double bounciness;
+	int angle;
 	public void setBounciness(double percentage) {
 		bounciness = percentage;
 	}
@@ -17,7 +17,7 @@ public abstract class Wall extends Entity implements Bouncy {
 	}
 	public Velocity getBounceVelocity (Velocity incomingVelocity) {
 		incomingVelocity.setSpeed(incomingVelocity.getSpeed() * getBounciness());
-		incomingVelocity.setDirection(angle + incomingVelocity.getDirection());
+		incomingVelocity.setDirection(2*angle - incomingVelocity.getDirection());
 		return incomingVelocity;
 	}
 }

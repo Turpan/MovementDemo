@@ -54,9 +54,9 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		playerLabel.bgImage = new ImageIcon(player.getSprite());
 		tickTimer = new Timer(10, this);
 		collisionCheck = new CollisionEngine();
-		player.setPositionX(0);
-		player.setPositionY(0);
-		playerLabel.setBounds(0, 0, 50, 50);
+		player.setPositionX(20);
+		player.setPositionY(20);
+		playerLabel.setBounds(20, 20, 50, 50);
 		chaserLabel = new PaintedPanel();
 		chaserLabel.setOpaque(false);
 		var ai = new ChaserAI(this);
