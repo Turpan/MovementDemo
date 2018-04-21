@@ -8,6 +8,13 @@ public abstract class Entity {
 	int width;
 	int height;
 	BufferedImage sprite;
+	BufferedImage collisionMap;
+	public BufferedImage getCollisionMap() {
+		return collisionMap;
+	}
+	public void setCollisionMap(BufferedImage collisionMap) {
+		this.collisionMap = collisionMap;
+	}
 	public int getWidth() {
 		return width;
 	}
@@ -34,10 +41,10 @@ public abstract class Entity {
 		setHeight(sprite.getHeight());
 		this.sprite = sprite;
 	}
-	protected void setPositionX(double positionX) {
+	public void setPositionX(double positionX) {
 		this.positionX = positionX;
 	}
-	protected void setPositionY(double positionY) {
+	public void setPositionY(double positionY) {
 		this.positionY = positionY;
 	}
 	public double getPositionX() {

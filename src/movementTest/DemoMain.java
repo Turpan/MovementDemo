@@ -1,4 +1,4 @@
-package movement;
+package movementTest;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;

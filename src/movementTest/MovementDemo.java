@@ -1,6 +1,7 @@
-package movement;
+package movementTest;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,9 +10,10 @@ import java.awt.event.KeyListener;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
+import movement.GameListener;
 import paintedPanel.PaintedPanel;
 
-public class MovementDemo implements KeyListener, ActionListener{
+public class MovementDemo implements KeyListener, ActionListener, GameListener{
 	static final int[][] directionTable = new int[][]
 			{{225, 270, 315},
 			{180, -1, 0},
@@ -22,7 +24,9 @@ public class MovementDemo implements KeyListener, ActionListener{
 	boolean downKey;
 	int counter;
 	PaintedPanel playerLabel;
+	PaintedPanel chaserLabel;
 	Player player;
+	ChaserEnemy chaser;
 	Timer tickTimer;
 	MovementDemo() {
 		createVariables();
@@ -36,11 +40,20 @@ public class MovementDemo implements KeyListener, ActionListener{
 		player = new Player();
 		playerLabel.bgImage = new ImageIcon(player.getSprite());
 		tickTimer = new Timer(10, this);
-		tickTimer.start();
-		player.setPositionX(300);
-		player.setPositionY(300);
-		playerLabel.setBounds(300, 300, 50, 50);
+		player.setPositionX(0);
+		player.setPositionY(0);
+		playerLabel.setBounds(0, 0, 50, 50);
+		chaserLabel = new PaintedPanel();
+		chaserLabel.setOpaque(false);
+		ChaserAI ai = new ChaserAI(this);
+		chaser = new ChaserEnemy(ai);
+		chaser.setPositionX(300);
+		chaser.setPositionY(300);
+		chaserLabel.bgImage = new ImageIcon(chaser.getSprite());
+		chaserLabel.setBounds(300, 300, 20, 20);
 		DemoMain.mainPanel.add(playerLabel);
+		DemoMain.mainPanel.add(chaserLabel);
+		tickTimer.start();
 	}
 	int calculateDirection() {
 		int x = 1;
@@ -95,9 +108,16 @@ public class MovementDemo implements KeyListener, ActionListener{
 		} else {
 			player.stopTick();
 		}
+		chaser.tick();
+		chaserLabel.setBounds((int) Math.round(chaser.getPositionX()), (int) Math.round(chaser.getPositionY()), chaser.getWidth(), chaser.getHeight());
 		playerLabel.setBounds((int) Math.round(player.getPositionX()), (int) Math.round(player.getPositionY()), player.getWidth(), player.getHeight());
 		playerLabel.setBackground((player.canDash()) ? Color.GREEN : Color.RED);
 		DemoMain.mainPanel.repaint();
-		if (counter % 200 == 0) player.stagger();
+		
+	}
+
+	@Override
+	public Dimension getPlayerLocation() {
+		return new Dimension((int) player.getPositionX(), (int) player.getPositionY());
 	}
 }

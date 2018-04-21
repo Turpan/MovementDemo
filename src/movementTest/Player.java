@@ -1,10 +1,16 @@
-package movement;
+package movementTest;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import movement.Collidable;
+import movement.Controllable;
+import movement.Dashing;
+import movement.Staggerable;
+import movement.Velocity;
 
 public class Player extends Controllable implements Dashing, Collidable, Staggerable {
 	static final int MAXSPEED = 20;
@@ -16,12 +22,14 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 	static final int DASHCOOLDOWN = 10;
 	static final int DASHLENGTH = 2;
 	static final int DASHSPEED = 50;
-	static final int STAGGERSPEED = 100;
+	static final int STAGGERSPEED = 20;
+	static final int STAGGERDECAY = 2;
 	int dashCoolDown;
 	double dashDirection;
-	double dashCounter;
+	double dashCounter; //this will be used for checking i frames
 	double dashCoolDownCount;
 	int staggerSpeed;
+	int staggerDecay;
 	public Player() {
 		setMaxSpeed(MAXSPEED);
 		setStopSpeed(STOPSPEED);
@@ -31,9 +39,10 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		setTimeScale(TIMESCALE);
 		setDashCoolDown(DASHCOOLDOWN);
 		setStaggerSpeed(STAGGERSPEED);
+		setStaggerDecay(STAGGERDECAY);
 		loadImage();
 	}
-	public void loadImage() {
+	private void loadImage() {
 		BufferedImage img = null;
 		try {
 		    img = ImageIO.read(new File("graphics/funnyman.png"));
@@ -133,8 +142,20 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		return staggerSpeed;
 	}
 	@Override
-	public void stagger() {
-		setSpeed(0-getStaggerSpeed());
+	public void setStaggerDecay(int staggerDecay) {
+		this.staggerDecay = staggerDecay;
 	}
-
+	@Override
+	public int getStaggerDecay() {
+		return staggerDecay;
+	}
+	@Override
+	public void stagger(int direction) {
+		Velocity stagger = new Velocity();
+		stagger.setDirection(direction);
+		stagger.setDecayRate(getStaggerDecay());
+		stagger.setSpeed(getStaggerSpeed());
+		stagger.setTimeScale(getTimeScale());
+		addVelocity(stagger);
+	}
 }
