@@ -65,12 +65,15 @@ public abstract class Controllable extends Moveable {
 	public void setDirectionThreshold(int directionThreshold) {
 		this.directionThreshold = directionThreshold;
 	}
-	@Override
-	public void move() {
+	public Velocity getOwnVelocity() {
 		var velocity = new Velocity();
 		velocity.setDirection((int) getDirection());
 		velocity.setSpeed(getSpeed());
-		calculatePosition(velocity);
+		return velocity;
+	}
+	@Override
+	public void move() {
+		calculatePosition(getOwnVelocity());
 		super.move();
 	}
 	public void tick(int direction) {

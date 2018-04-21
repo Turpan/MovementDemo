@@ -13,6 +13,7 @@ import movement.Enemy;
 import movement.Entity;
 import movement.Staggerable;
 import movement.Velocity;
+import movement.Wall;
 
 public class Player extends Controllable implements Dashing, Collidable, Staggerable {
 	static final int MAXSPEED = 20;
@@ -173,6 +174,11 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		if (entity instanceof Enemy) {
 			var enemy = (Enemy) entity;
 			stagger((int) adjustDegrees(enemy.getDirection()));
+		}
+		if (entity instanceof Wall) {
+			var wall = (Wall) entity;
+			addVelocity(wall.getBounceVelocity(getOwnVelocity()));
+			setSpeed(0);
 		}
 	}
 }
