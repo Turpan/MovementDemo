@@ -14,12 +14,16 @@ public class CollisionEngine {
 	}
 	private void collisionDetection(List<Entity> entityList, Entity entity1) {
 		int position = entityList.indexOf(entity1) + 1;
-		var collideable = (Collidable) entity1;
+		var collideable1 = (Collidable) entity1;
 		for (int i = position; i<entityList.size(); i++) {
 			var entity2 = entityList.get(i);
 			if (checkBoundsCollision(entity1, entity2)) {
 				if (checkPixelCollision(entity1, entity2)) {
-					collideable.collisionWith(entity2);
+					collideable1.collisionWith(entity2);
+					if (entity2 instanceof Collidable) {
+						var collidable2 = (Collidable) entity2;
+						collidable2.collisionWith(entity1);
+					}
 				}
 			}
 		}
@@ -33,21 +37,23 @@ public class CollisionEngine {
 				&& entity1.getPositionY() < bottom2 && bottom1 > entity2.getPositionY()); 
 	}
 	private boolean checkPixelCollision(Entity entity1, Entity entity2) {
-		var x = (int) Math.max(entity1.getPositionX(), entity2.getPositionX());
+		return true;
+/*		var x = (int) Math.max(entity1.getPositionX(), entity2.getPositionX());
 		var right = (int) Math.min(getEntityRight(entity1), getEntityRight(entity2));
 		var y = (int) Math.max(entity1.getPositionY(), entity2.getPositionY());
 		var bottom = (int) Math.min(getEntityBottom(entity1), getEntityBottom(entity2));
+		
 		for (int i=x; i<right; i++) {
 			for (int j=y; j<bottom; j++) {
-				/*var entity1Pixel = new Color(entity1.getCollisionMap().getRGB(x, y));
+				var entity1Pixel = new Color(entity1.getCollisionMap().getRGB(x, y));
 				var entity2Pixel = new Color(entity2.getCollisionMap().getRGB(x, y));
 				if (entity1Pixel.equals(bitMaskColor) && entity2Pixel.equals(bitMaskColor)) {
 					return true;
-				}*/
-				return true;
+				}
+				
 			}
 		}
-		return false;
+		return false;*/
 	}
 	private double getEntityRight(Entity entity) {
 		return entity.getPositionX() + entity.getWidth();

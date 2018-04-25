@@ -27,8 +27,9 @@ public abstract class Moveable extends Entity {
 		velocityList.add(velocity);
 	}
 	protected void calculatePosition(Velocity velocity) {
-		setPositionX((getPositionX() + (velocity.getSpeed() * getTimeScale() * Math.cos(Math.toRadians(velocity.getDirection())))));
-		setPositionY((getPositionY() + (velocity.getSpeed() * getTimeScale() * Math.sin(Math.toRadians(velocity.getDirection())))));
+		var x = ((getPositionX() + (velocity.getSpeed() * getTimeScale() * Math.cos(Math.toRadians(velocity.getDirection())))));
+		var y = ((getPositionY() + (velocity.getSpeed() * getTimeScale() * Math.sin(Math.toRadians(velocity.getDirection())))));
+		updatePosition(x, y);
 	}
 	public void move() {
 		Iterator<Velocity> iter = velocityList.iterator();

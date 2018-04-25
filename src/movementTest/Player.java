@@ -6,33 +6,42 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import movement.Collidable;
-import movement.Controllable;
+import movement.Attacker;
+import movement.Bouncy;
 import movement.Dashing;
 import movement.Enemy;
 import movement.Entity;
+import movement.GameListener;
+import movement.Projectile;
 import movement.Staggerable;
 import movement.Velocity;
-import movement.Wall;
 
-public class Player extends Controllable implements Dashing, Collidable, Staggerable {
-	static final int MAXSPEED = 20;
-	static final int STOPSPEED = 10;
-	static final int MOVESPEED = 7;
+public class Player extends Attacker implements Dashing, Staggerable {
+	static final int MAXSPEED = 30;
+	static final int STOPSPEED = 5;
+	static final int MOVESPEED = 1;
 	static final int DIRECTIONTHRESHOLD = 90;
-	static final int TURNSPEED = 30;
+	static final int TURNSPEED = 9;
 	static final double TIMESCALE = 0.1;
-	static final int DASHCOOLDOWN = 10;
-	static final int DASHLENGTH = 2;
-	static final int DASHSPEED = 50;
-	static final int STAGGERSPEED = 10;
+	static final int DASHCOOLDOWN = 20;
+	static final int DASHLENGTH = 3;
+	static final int DASHSPEED = 70;
 	static final int STAGGERDECAY = 2;
+	static final int STRIKEDISTANCE = 25;
+	static final int MAXHEALTH = 10;
+	static final int INVINCIBILITYTIME = 10;
+	static final double ATTACKDURATION = 2;
 	int dashCoolDown;
 	double dashDirection;
 	double dashCounter; //this will be used for checking i frames
 	double dashCoolDownCount;
-	int staggerSpeed;
+	double attackCounter;
+	double attackDuration;
 	int staggerDecay;
+	PlayerSword sword;
+	PlayerStrike strike;
+	PlayerTurret turret;
+	GameListener listener;
 	public Player() {
 		setMaxSpeed(MAXSPEED);
 		setStopSpeed(STOPSPEED);
@@ -41,9 +50,25 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		setTurnSpeed(TURNSPEED);
 		setTimeScale(TIMESCALE);
 		setDashCoolDown(DASHCOOLDOWN);
-		setStaggerSpeed(STAGGERSPEED);
 		setStaggerDecay(STAGGERDECAY);
+		setMaxHealth(MAXHEALTH);
+		setCurrentHealth(MAXHEALTH);
+		setAttackDuration(ATTACKDURATION);
+		setInvincibilityTime(INVINCIBILITYTIME);
 		loadImage();
+		createObjects();
+	}
+	private double getAttackCounter() {
+		return attackCounter;
+	}
+	private void setAttackCounter(double attackCounter) {
+		this.attackCounter = attackCounter;
+	}
+	private double getAttackDuration() {
+		return attackDuration;
+	}
+	private void setAttackDuration(double attackDuration) {
+		this.attackDuration = attackDuration;
 	}
 	private void loadImage() {
 		BufferedImage img = null;
@@ -61,6 +86,60 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		setSprite(img);
 		setCollisionMap(img2);
 	}
+	private void createObjects() {
+		sword = new PlayerSword();
+		strike = new PlayerStrike();
+		turret = new PlayerTurret();
+	}
+	private void moveStrike(double x, double y) {
+		x += (STRIKEDISTANCE * Math.cos(Math.toRadians(getDirection())));
+		y += (STRIKEDISTANCE * Math.sin(Math.toRadians(getDirection())));
+		strike.updatePosition(x - (strike.getWidth() / 2), y - (strike.getHeight() / 2));
+	}
+	private void moveTurret() {
+		turret.updatePosition(getPositionX() + PlayerTurret.XOFFSET, getPositionY() + PlayerTurret.YOFFSET);
+	}
+	private void moveSword() {
+		var x = getPositionX() + (getWidth() / 2);
+		var y = getPositionY() + (getHeight() / 2);
+		x += (STRIKEDISTANCE * Math.cos(Math.toRadians(getDirection())));
+		y += (STRIKEDISTANCE * Math.sin(Math.toRadians(getDirection())));
+		sword.updatePosition(x, y);
+	}
+	private boolean isAttacking() {
+		return (getAttackCounter() > 0);
+	}
+	private void attackTick() {
+		setAttackCounter(getAttackCounter() - getTimeScale());
+	}
+	public void attack() {
+		setAttackCounter(getAttackDuration());
+	}
+	public void turnTurret(int direction) {
+		turret.turn(direction);
+	}
+	@Override
+	public void updatePosition(double positionX, double positionY) {
+		super.updatePosition(positionX, positionY);
+		double x;
+		double y;
+		if (isAttacking()) {
+			x = getPositionX() + (getWidth() / 2);
+			y = getPositionY() + (getHeight() / 2);
+		} else {
+			x = -50;
+			y = -50;
+		}
+		moveSword();
+		moveStrike(x, y);
+		moveTurret();
+	}
+	@Override
+	public void setDirection(double direction) {
+		super.setDirection(direction);
+		strike.setDirection(getDirection());
+		sword.setDirection(getDirection());
+	}
 	@Override
 	public void tick(int direction) {
 		if (isDashing()) {
@@ -72,6 +151,13 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		if (!canDash()) {
 			dashCoolDownTick();
 		}
+		if (isAttacking()) {
+			attackTick();
+		}
+	}
+	@Override
+	public boolean isAttackable() {
+		return (!isDashing() && !isInvincible());
 	}
 	@Override
 	public boolean canDash() {
@@ -142,17 +228,6 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		setDashCounter(DASHLENGTH);
 	}
 	@Override
-	public void setStaggerSpeed(int staggerSpeed) {
-		if (staggerSpeed < 0) {
-			staggerSpeed = 0;
-		}
-		this.staggerSpeed = staggerSpeed;
-	}
-	@Override
-	public int getStaggerSpeed() {
-		return staggerSpeed;
-	}
-	@Override
 	public void setStaggerDecay(int staggerDecay) {
 		this.staggerDecay = staggerDecay;
 	}
@@ -161,27 +236,45 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		return staggerDecay;
 	}
 	@Override
-	public void stagger(int direction) {
+	public void stagger(int direction, int speed) {
 		Velocity stagger = new Velocity();
 		stagger.setDirection(direction);
 		stagger.setDecayRate(getStaggerDecay());
-		stagger.setSpeed(getStaggerSpeed());
+		stagger.setSpeed(speed);
 		stagger.setTimeScale(getTimeScale());
 		addVelocity(stagger);
+		var playerSpeed = getSpeed() - speed;
+		if (playerSpeed < 0) {
+			playerSpeed = 0;
+		}
+		setSpeed(playerSpeed);
 	}
 	@Override
 	public void collisionWith(Entity entity) {
-		if (entity instanceof Enemy) {
+		if (entity instanceof Enemy && isAttackable()) {
 			var enemy = (Enemy) entity;
-			stagger((int) adjustDegrees(enemy.getDirection()));
+			stagger((int) adjustDegrees(enemy.getDirection()), enemy.getForce());
+			damaged(enemy.getDamage());
+			gainInvincibility();
 		}
-		if (entity instanceof Wall) {
-			var wall = (Wall) entity;
+		if (entity instanceof Bouncy) {
+			var bouncy = (Bouncy) entity;
 			var velocity = getOwnVelocity();
             velocity.setDecayRate(2);
             velocity.setTimeScale(getTimeScale());
-			addVelocity(wall.getBounceVelocity(velocity));
+            velocity = bouncy.getBounceVelocity(velocity);
+			addVelocity(velocity);
 			setSpeed(0);
+			setDirection(velocity.getDirection());
 		}
+		if (entity instanceof Projectile && !(entity instanceof PlayerBullet) && !(entity instanceof PlayerStrike) && isAttackable()) {
+			var projectile = (Projectile) entity;
+			stagger((int) adjustDegrees(projectile.getDirection()), projectile.getForce());
+			damaged(projectile.getDamage());
+		}
+	}
+	@Override
+	public void die() {
+		listener.removeEntity(this);
 	}
 }

@@ -41,10 +41,14 @@ public abstract class Entity {
 		setHeight(sprite.getHeight());
 		this.sprite = sprite;
 	}
-	public void setPositionX(double positionX) {
+	public void updatePosition(double positionX, double positionY) {
+		setPositionX(positionX);
+		setPositionY(positionY);
+	}
+	private void setPositionX(double positionX) {
 		this.positionX = positionX;
 	}
-	public void setPositionY(double positionY) {
+	private void setPositionY(double positionY) {
 		this.positionY = positionY;
 	}
 	public double getPositionX() {

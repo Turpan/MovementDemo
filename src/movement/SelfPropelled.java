@@ -1,6 +1,6 @@
 package movement;
 
-public abstract class Controllable extends Moveable {
+public abstract class SelfPropelled extends Moveable {
 	int maxSpeed;
 	int moveSpeed;
 	int stopSpeed;
@@ -77,7 +77,9 @@ public abstract class Controllable extends Moveable {
 		super.move();
 	}
 	public void tick(int direction) {
-		if (direction == getDirection()) {
+		if (direction < 0) {
+			stopTick();
+		} else if (direction == getDirection()) {
 			movementTick(direction);
 		} else if (direction != getDirection() && acceptableDirectionChange(direction)) {
 			movementTick(direction);
@@ -138,15 +140,11 @@ public abstract class Controllable extends Moveable {
 		return (Math.abs(distanceA) < Math.abs(distanceB)) ? distanceA : distanceB;
 	}
 	private int incrementThroughDegrees(int countPosition, int positionB, int increment) {
-		boolean pointFound = false;
 		int counter = 0;
-		while (!pointFound) {
+		while (countPosition != positionB) {
 			countPosition += increment;
 			counter+= increment;
 			countPosition = (int) adjustDegrees(countPosition);
-			if (countPosition == positionB) {
-				pointFound = true;
-			}
 		}
 		return counter;
 	}
