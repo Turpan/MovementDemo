@@ -3,6 +3,7 @@ package movementTest;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -177,7 +178,9 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		}
 		if (entity instanceof Wall) {
 			var wall = (Wall) entity;
-			var velocity = getOwnVelocity();
+			ArrayList<Velocity> velocities = (ArrayList<Velocity>) getVelocities();
+			velocities.add(getOwnVelocity());
+			var velocity = Velocity.addVelocities(velocities);
             velocity.setDecayRate(2);
             velocity.setTimeScale(getTimeScale());
 			addVelocity(wall.getBounceVelocity(velocity));

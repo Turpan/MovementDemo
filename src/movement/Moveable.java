@@ -11,6 +11,9 @@ public abstract class Moveable extends Entity {
 	public int getTurnSpeed() {
 		return turnSpeed;
 	}
+	public List<Velocity> getVelocities(){
+		return velocityList;
+	}
 	public void setTurnSpeed(int turnSpeed) {
 		this.turnSpeed = turnSpeed;
 	}

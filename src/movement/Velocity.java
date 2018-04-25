@@ -35,17 +35,18 @@ public class Velocity {
 	public void tick() {
 		setSpeed(getSpeed() - (getDecayRate() * getTimeScale()));
 	}
-	static Velocity addVelocities(List<Velocity> velocities) {
+	public static Velocity addVelocities(List<Velocity> velocities) {
 		Velocity outputVelocity = new Velocity();
 		int size = velocities.size();
-		double sumDecayRate = 0;
-		double sumTimeScale = 0;
+		double maxVelocity = -1;
+		double outputTimeScale;
+		double outputDecayRate;
 		switch (size){
 			case 0:
 				// set output to be all 0 velocity. so that you don't break methods entirely by running this output in all velocity cases for all lists of velocities
 				outputVelocity.setSpeed(0);
 				outputVelocity.setDirection(0);
-				outputVelocity.setDecayRate(0);
+				outputVelocity.setDecayRate(100);
 				outputVelocity.setTimeScale(0);
 			case 1:	// ofcourse, summing 1 vector outputs the summand
 				outputVelocity = velocities.get(0); 
@@ -63,16 +64,19 @@ public class Velocity {
 						v2.getSpeed() * Math.cos(v2.getDirection()-v1.getDirection()))));
 				// average timescale and decay rate
 				for (Velocity v: velocities) {
-					sumDecayRate += v.getDecayRate();
-					sumTimeScale += v.getTimeScale();
+					if (v.getSpeed() > maxVelocity) {
+						maxVelocity = v.getSpeed();
+						outputDecayRate = v.getDecayRate();
+						outputTimeScale = v.getTimeScale();
+				}
 				}
 				
-				outputVelocity.setDecayRate(sumDecayRate/ size);
-				outputVelocity.setTimeScale(sumTimeScale/size);
+				outputVelocity.setDecayRate(outputDecayRate);
+				outputVelocity.setTimeScale(outputTimeScale);
 				break;
 			default: //i.e length greater than 2. Used a general formula for calculating resultant, due to easier scaling up. 
 					 //Better than iterative uses of above method
-				List<ArrayList<Double>> cartesianVelocities = new ArrayList<ArrayList<Double>>(); //inner lists being the XY vectors of each V
+			/*	List<ArrayList<Double>> cartesianVelocities = new ArrayList<ArrayList<Double>>(); //inner lists being the XY vectors of each V
 				ArrayList<Double> entry = new ArrayList<Double>();
 				double xComponent = 0;
 				double yComponent = 0;
@@ -80,18 +84,30 @@ public class Velocity {
 					entry.add(v.getSpeed() * Math.cos(v.getDirection()));
 					entry.add(v.getSpeed()* Math.sin(v.getDirection()));
 					cartesianVelocities.add(entry);
-					sumDecayRate += v.getDecayRate();
-					sumTimeScale += v.getTimeScale();
+					
+					if (v.getDecayRate() > maxDecayRate) {
+						maxDecayRate = v.getDecayRate();
+					}if (v.getTimeScale() < minTimeScale || minTimeScale== -1) {
+						minTimeScale = v.getTimeScale();
+					}
 				}for (ArrayList<Double> cartV : cartesianVelocities) {
 					xComponent += cartV.get(0);
 					yComponent += cartV.get(1);
 				}
 				
+				outputVelocity.setDecayRate(maxDecayRate);
+				outputVelocity.setTimeScale(minTimeScale);
 				outputVelocity.setSpeed(Math.sqrt(Math.pow(xComponent,2) + Math.pow(yComponent, 2)));
-				outputVelocity.setDirection((int)Math.atan2(xComponent, yComponent));
-				outputVelocity.setDecayRate(sumDecayRate/velocities.size());
-				outputVelocity.setTimeScale(sumTimeScale/velocities.size());
-		}
+			 	outputVelocity.setDirection((int)Math.atan2(xComponent, yComponent)); 				*/
+				ArrayList<Velocity> newVelocities =  new ArrayList<Velocity>();
+				if (!(velocities.isEmpty())){
+					newVelocities.add(velocities.get(0));
+					newVelocities.add(outputVelocity);
+					velocities.remove(0);
+					outputVelocity = Velocity.addVelocities(newVelocities);
+					}
+			}
+				
 		return outputVelocity;
 	}
 }
