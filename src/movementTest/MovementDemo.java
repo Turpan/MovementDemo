@@ -78,8 +78,8 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		wideWallTLabel.setBounds(0,0, 600, 20);
 		wideWallBLabel.setBounds(0,580, 600, 20);
 		longWallL = new TestWall(90, 1.0);
-		longWallR = new TestWall(90, 1.0);
-		wideWallT = new TestWall(0, 1.0);
+		longWallR = new TestWall(270, 1.0);
+		wideWallT = new TestWall(180, 1.0);
 		wideWallB = new TestWall(0, 1.0);
 		longWallL.setPositionX(0);
 		longWallL.setPositionY(0);
@@ -160,10 +160,9 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 	public void actionPerformed(ActionEvent arg0) {
 		counter ++;
 		if ((rightKey || leftKey || upKey || downKey) && calculateDirection() > -1) {
-			player.tick(calculateDirection());
-		} else {
-			player.stopTick();
-		}
+			player.locomote(calculateDirection());
+		} 
+		player.tick();
 		chaser.tick();
 		collisionCheck.checkCollision(roomContents);
 		chaserLabel.setBounds((int) Math.round(chaser.getPositionX()), (int) Math.round(chaser.getPositionY()), chaser.getWidth(), chaser.getHeight());

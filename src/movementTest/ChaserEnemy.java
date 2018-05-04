@@ -10,20 +10,22 @@ import movement.Enemy;
 import movement.EnemyAI;
 
 public class ChaserEnemy extends Enemy{
-	static final int MAXSPEED = 15;
-	static final int STOPSPEED = 5;
-	static final int MOVESPEED = 2;
-	static final int DIRECTIONTHRESHOLD = 90;
-	static final int TURNSPEED = 10;
+
+	static final double MASS = 7;
+	static final double BASEMOVEFORCE = 40;
 	static final double TIMESCALE = 0.1;
+	static final double COEFFICIENT_OF_RESTITUTION = 0.9;	
+	static final double COEFFICIENT_OF_DRAG = 0.05;			
+	static final double  COEFFICIENT_OF_FRICTION = 0.25; 
+	
 	public ChaserEnemy(EnemyAI AI) {
 		super(AI);
-		setMaxSpeed(MAXSPEED);
-		setStopSpeed(STOPSPEED);
-		setMoveSpeed(MOVESPEED);
-		setDirectionThreshold(DIRECTIONTHRESHOLD);
-		setTurnSpeed(TURNSPEED);
+		setMass(MASS);
+		setBaseMoveForce(BASEMOVEFORCE);
 		setTimeScale(TIMESCALE);
+		setCoF(COEFFICIENT_OF_FRICTION);
+		setCoD(COEFFICIENT_OF_DRAG);
+		setCoR(COEFFICIENT_OF_RESTITUTION);
 		loadImage();
 	}
 	private void loadImage() {

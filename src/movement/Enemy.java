@@ -15,7 +15,8 @@ public abstract class Enemy extends Controllable {
 	}
 	public void tick() {
 		if (AI.isActive()) {
-			super.tick((int) adjustDegrees(calculateDirection()));
+			super.locomote(calculateDirection());
 		}
+		super.tick();
 	}
 }

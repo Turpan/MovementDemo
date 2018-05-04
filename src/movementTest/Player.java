@@ -3,47 +3,37 @@ package movementTest;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import movement.Collidable;
 import movement.Controllable;
 import movement.Dashing;
-import movement.Enemy;
-import movement.Entity;
-import movement.Staggerable;
-import movement.Velocity;
-import movement.Wall;
+import movement.Force;
 
-public class Player extends Controllable implements Dashing, Collidable, Staggerable {
-	static final int MAXSPEED = 20;
-	static final int STOPSPEED = 10;
-	static final int MOVESPEED = 7;
-	static final int DIRECTIONTHRESHOLD = 90;
-	static final int TURNSPEED = 30;
+public class Player extends Controllable implements Dashing {
+
+	static final double MASS = 10;
+	static final double BASEMOVEFORCE = 40;
 	static final double TIMESCALE = 0.1;
+	static final double COEFFICIENT_OF_RESTITUTION = 0.9;	//'bounciness' Used for collisions. See Controllable.
+	static final double COEFFICIENT_OF_DRAG = 0.05;			//coefficient of proportionality between quadratic drag and speed
+	static final double  COEFFICIENT_OF_FRICTION = 0.25; 	//the coefficient of proportionality between the constant drag and mass
 	static final int DASHCOOLDOWN = 10;
-	static final int DASHLENGTH = 2;
-	static final int DASHSPEED = 50;
-	static final int STAGGERSPEED = 10;
-	static final int STAGGERDECAY = 2;
+	static final int DASHLENGTH = 15;
+	static final int DASHFORCE = 1000;
+	
 	int dashCoolDown;
 	double dashDirection;
 	double dashCounter; //this will be used for checking i frames
 	double dashCoolDownCount;
-	int staggerSpeed;
-	int staggerDecay;
 	public Player() {
-		setMaxSpeed(MAXSPEED);
-		setStopSpeed(STOPSPEED);
-		setMoveSpeed(MOVESPEED);
-		setDirectionThreshold(DIRECTIONTHRESHOLD);
-		setTurnSpeed(TURNSPEED);
+		setBaseMoveForce(BASEMOVEFORCE);
+		setMass(MASS);
 		setTimeScale(TIMESCALE);
 		setDashCoolDown(DASHCOOLDOWN);
-		setStaggerSpeed(STAGGERSPEED);
-		setStaggerDecay(STAGGERDECAY);
+		setCoF(COEFFICIENT_OF_FRICTION);
+		setCoD(COEFFICIENT_OF_DRAG);
+		setCoR(COEFFICIENT_OF_RESTITUTION);
 		loadImage();
 	}
 	private void loadImage() {
@@ -63,20 +53,13 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		setCollisionMap(img2);
 	}
 	@Override
-	public void tick(int direction) {
-		if (isDashing()) {
-			dashTick();
-		} else {
-			setMaxSpeed(MAXSPEED);
-			super.tick(direction);
-		}
-		if (!canDash()) {
-			dashCoolDownTick();
-		}
+	public void tick(){
+		super.tick();
+		dashCoolDownTick();
 	}
 	@Override
 	public boolean canDash() {
-		return (getDashCoolDownCount() == 0);
+		return (getDashCoolDownCount() <= 0);
 	}
 	@Override
 	public boolean isDashing() {
@@ -84,9 +67,6 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 	}
 	@Override
 	public void setDashCoolDown(int dashCoolDown) {
-		if (dashCoolDown < 0) {
-			dashCoolDown = 0;
-		}
 		this.dashCoolDown = dashCoolDown;
 	}
 	@Override
@@ -102,89 +82,20 @@ public class Player extends Controllable implements Dashing, Collidable, Stagger
 		return dashCoolDownCount;
 	}
 	@Override
-	public void setDashCounter(double dashCounter) {
-		this.dashCounter = dashCounter;
-	}
-	@Override
-	public double getDashCounter() {
-		return dashCounter;
-	}
-	@Override
-	public void setDashDirection(double dashDirection) {
-		this.dashDirection = adjustDegrees(dashDirection);
-	}
-	@Override
-	public double getDashDirection() {
-		return dashDirection;
-	}
-	@Override
 	public void dashCoolDownTick() {
 		setDashCoolDownCount(getDashCoolDownCount() - getTimeScale());
-		if (getDashCoolDownCount() < 0) {
-			setDashCoolDownCount(0);
-		}
-	}
-	@Override
-	public void dashTick() {
-		setDirection(getDashDirection());
-		setMaxSpeed(DASHSPEED);
-		setAcceleration(DASHSPEED);
-		setDashCounter(getDashCounter() - getTimeScale());
-		setSpeed(getNextSpeed());
-		move();
 	}
 	@Override
 	public void dash(int direction) {
 		if (!canDash()) {
 			return;
 		}
-		setDashDirection(direction);
+		var dashForce = new Force();
+		dashForce.setMagnitude(DASHFORCE);
+		dashForce.setDirection(direction);
+		dashForce.setDuration(DASHLENGTH);
+		stop();
+		applyForce(dashForce);
 		setDashCoolDownCount(getDashCoolDown());
-		setDashCounter(DASHLENGTH);
-	}
-	@Override
-	public void setStaggerSpeed(int staggerSpeed) {
-		if (staggerSpeed < 0) {
-			staggerSpeed = 0;
-		}
-		this.staggerSpeed = staggerSpeed;
-	}
-	@Override
-	public int getStaggerSpeed() {
-		return staggerSpeed;
-	}
-	@Override
-	public void setStaggerDecay(int staggerDecay) {
-		this.staggerDecay = staggerDecay;
-	}
-	@Override
-	public int getStaggerDecay() {
-		return staggerDecay;
-	}
-	@Override
-	public void stagger(int direction) {
-		Velocity stagger = new Velocity();
-		stagger.setDirection(direction);
-		stagger.setDecayRate(getStaggerDecay());
-		stagger.setSpeed(getStaggerSpeed());
-		stagger.setTimeScale(getTimeScale());
-		addVelocity(stagger);
-	}
-	@Override
-	public void collisionWith(Entity entity) {
-		if (entity instanceof Enemy) {
-			var enemy = (Enemy) entity;
-			stagger((int) adjustDegrees(enemy.getDirection()));
-		}
-		if (entity instanceof Wall) {
-			var wall = (Wall) entity;
-			ArrayList<Velocity> velocities = (ArrayList<Velocity>) getVelocities();
-			velocities.add(getOwnVelocity());
-			var velocity = Velocity.addVelocities(velocities);
-            velocity.setDecayRate(2);
-            velocity.setTimeScale(getTimeScale());
-			addVelocity(wall.getBounceVelocity(velocity));
-			setSpeed(0);
-		}
 	}
 }

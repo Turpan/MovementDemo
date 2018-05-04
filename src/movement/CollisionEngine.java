@@ -20,6 +20,10 @@ public class CollisionEngine {
 			if (checkBoundsCollision(entity1, entity2)) {
 				if (checkPixelCollision(entity1, entity2)) {
 					collideable.collisionWith(entity2);
+					if (entity2 instanceof Collidable) {
+                        var collidable2 = (Collidable) entity2;
+                        collidable2.collisionWith(entity1);
+                    }
 				}
 			}
 		}

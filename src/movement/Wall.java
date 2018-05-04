@@ -15,9 +15,4 @@ public abstract class Wall extends Entity implements Bouncy {
 	public int getAngle() {
 		return angle;
 	}
-	public Velocity getBounceVelocity (Velocity incomingVelocity) {
-		incomingVelocity.setSpeed(incomingVelocity.getSpeed() * getBounciness());
-		incomingVelocity.setDirection(2*angle - incomingVelocity.getDirection());
-		return incomingVelocity;
-	}
 }
