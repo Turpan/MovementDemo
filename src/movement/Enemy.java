@@ -40,7 +40,7 @@ public abstract class Enemy extends Attacker {
 	}
 	public void tick() {
 		if (isActive()) {
-			super.tick((int) adjustDegrees(calculateDirection()));
+			super.tick();
 			if (canAttack() && attackReady()) {
 				attack();
 			} else if (!attackReady()) {

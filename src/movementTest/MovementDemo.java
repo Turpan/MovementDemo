@@ -205,7 +205,8 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		if (turretCounter > 0) {
 			turretCounter -= 1;
 		}
-		player.tick(calculateDirection());
+		player.locomote(calculateDirection());
+		player.tick();
 		collisionCheck.checkCollision(roomContents);
 		playerLabel.setBounds((int) Math.round(player.getPositionX()), (int) Math.round(player.getPositionY()), player.getWidth(), player.getHeight());
 		playerSwordLabel.setBounds((int) Math.round(player.sword.getPositionX()), (int) Math.round(player.sword.getPositionY()), player.sword.getWidth(), player.sword.getHeight());
@@ -267,8 +268,8 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		wideWallTLabel.setBounds(0,0, 1600, 20);
 		wideWallBLabel.setBounds(0,880, 1600, 20);
 		longWallL = new TestWall(90, 1.0);
-		longWallR = new TestWall(90, 1.0);
-		wideWallT = new TestWall(0, 1.0);
+		longWallR = new TestWall(270, 1.0);
+		wideWallT = new TestWall(180, 1.0);
 		wideWallB = new TestWall(0, 1.0);
 		longWallL.updatePosition(0, 0);
 		longWallR.updatePosition(1580, 0);

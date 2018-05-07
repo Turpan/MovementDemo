@@ -1,161 +1,31 @@
 package movement;
 
+import java.util.ArrayList;
+
 public abstract class SelfPropelled extends Moveable {
-	int maxSpeed;
-	int moveSpeed;
-	int stopSpeed;
-	int directionThreshold;
-	double direction;
-	double speed;
-	double acceleration;
-	boolean stopped;
-	public int getStopSpeed() {
-		return stopSpeed;
+	double baseMoveForce;
+
+	public double getBaseMoveForce() {
+		return baseMoveForce;
 	}
-	public void setStopSpeed(int stopSpeed) {
-		if (stopSpeed < 1 ) {
-			stopSpeed = 1;
+	public void setBaseMoveForce(double baseMoveForce) {
+		if (baseMoveForce < 0) {
+			baseMoveForce = 0;
 		}
-		this.stopSpeed = stopSpeed;
+		this.baseMoveForce = baseMoveForce;
 	}
-	public double getAcceleration() {
-		return acceleration;
+	public void locomote(int direction) {
+
+		var movementForce = new Force();
+		movementForce.setMagnitude(baseMoveForce);
+		movementForce.setDirection(direction);
+		movementForce.setDuration(1);
+		applyForce(movementForce);
+		
 	}
-	protected void setAcceleration(double acceleration) {
-		this.acceleration = acceleration;
+	public void stop() {
+		accelerations = new ArrayList<Acceleration>();
+		getVelocity().setMagnitude(0);
 	}
-	public int getMoveSpeed() {
-		return moveSpeed;
-	}
-	public int getMaxSpeed() {
-		return maxSpeed;
-	}
-	public void setMaxSpeed(int maxSpeed) {
-		this.maxSpeed = maxSpeed;
-	}
-	public double getDirection() {
-		return direction;
-	}
-	public void setDirection(double direction) {
-		direction = adjustDegrees(direction);
-		this.direction = direction;
-	}
-	public double getSpeed() {
-		return speed;
-	}
-	public void setSpeed(double speed) {
-		if (speed > maxSpeed) {
-			speed = maxSpeed;
-		} else if (speed < 0-maxSpeed) {
-			speed = 0-maxSpeed;
-		}
-		this.speed = speed;
-	}
-	public void setMoveSpeed(int moveSpeed) {
-		if (moveSpeed < 0) {
-			moveSpeed = 0;
-		} else if (moveSpeed > getMaxSpeed()) {
-			moveSpeed = getMaxSpeed();
-		}
-		this.moveSpeed = moveSpeed;
-	}
-	public int getDirectionThreshold() {
-		return directionThreshold;
-	}
-	public void setDirectionThreshold(int directionThreshold) {
-		this.directionThreshold = directionThreshold;
-	}
-	public Velocity getOwnVelocity() {
-		var velocity = new Velocity();
-		velocity.setDirection((int) getDirection());
-		velocity.setSpeed(getSpeed());
-		return velocity;
-	}
-	@Override
-	public void move() {
-		calculatePosition(getOwnVelocity());
-		super.move();
-	}
-	public void tick(int direction) {
-		if (direction < 0) {
-			stopTick();
-		} else if (direction == getDirection()) {
-			movementTick(direction);
-		} else if (direction != getDirection() && acceptableDirectionChange(direction)) {
-			movementTick(direction);
-		} else if (direction != getDirection() && stopped) {
-			movementTick(direction);
-		} else {
-			stopTick();
-		}
-	}
-	public double getNextSpeed() {
-		return getSpeed() + (getAcceleration() * getTimeScale());
-	}
-	public void stopTick() {
-		setAcceleration(0-stopSpeed);
-		if (getNextSpeed() <= 0) {
-			setSpeed(0);
-			setAcceleration(0);
-			stopped = true;
-		}
-		setSpeed(getNextSpeed());
-		move();
-	}
-	boolean acceptableDirectionChange(int direction) {
-		return (directionThreshold >= Math.abs(distanceBetweenDegrees(direction, (int) getDirection())));
-	}
-	public void turn(int direction) {
-		direction = (int) adjustDegrees(direction);
-		int distance = distanceBetweenDegrees((int) getDirection(), direction);
-		if (Math.abs(distance) <= (getTurnSpeed() * getTimeScale())) {
-			setDirection(direction);
-			return;
-		}
-		if (distance < 0) { //negative
-			setDirection(adjustDegrees(getDirection() + (0-getTurnSpeed() * getTimeScale())));
-		} else { //positive
-			setDirection(adjustDegrees(getDirection() + (getTurnSpeed() * getTimeScale())));
-		}
-	}
-	private void movementTick(int direction) {
-		stopped = false;
-		turnHandling(direction);
-		setAcceleration(moveSpeed);
-		setSpeed(getNextSpeed());
-		move();
-	}
-	private void turnHandling(int direction) {
-		if (getDirection() != direction) {
-			if (getSpeed() == 0) {
-				setDirection(direction);
-			} else {
-				turn(direction);
-			}
-		}
-	}
-	public int distanceBetweenDegrees(int positionA, int positionB) {
-		int distanceA = incrementThroughDegrees(positionA, positionB, -1);
-		int distanceB = incrementThroughDegrees(positionA, positionB, 1);
-		return (Math.abs(distanceA) < Math.abs(distanceB)) ? distanceA : distanceB;
-	}
-	private int incrementThroughDegrees(int countPosition, int positionB, int increment) {
-		int counter = 0;
-		while (countPosition != positionB) {
-			countPosition += increment;
-			counter+= increment;
-			countPosition = (int) adjustDegrees(countPosition);
-		}
-		return counter;
-	}
-	public double adjustDegrees(double degree) {
-		while (degree < 0 || degree >= 360) {
-			if (degree >= 360) {
-				degree -= 360;
-			} else if (degree < 0) {
-				degree += 360;
-			}
-		}
-		return degree;
-	}
+
 }

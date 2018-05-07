@@ -45,10 +45,10 @@ public abstract class Entity {
 		setPositionX(positionX);
 		setPositionY(positionY);
 	}
-	private void setPositionX(double positionX) {
+	public void setPositionX(double positionX) {
 		this.positionX = positionX;
 	}
-	private void setPositionY(double positionY) {
+	public void setPositionY(double positionY) {
 		this.positionY = positionY;
 	}
 	public double getPositionX() {
