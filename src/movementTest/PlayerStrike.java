@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import graphicsHelper.ImageRotater;
 import movement.Entity;
 import movement.Projectile;
+import movementGraphics.ImageRotater;
 
 public class PlayerStrike extends Projectile {
 	static final double DAMAGE = 2;

@@ -1,4 +1,4 @@
-package graphicsHelper;
+package movementGraphics;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;

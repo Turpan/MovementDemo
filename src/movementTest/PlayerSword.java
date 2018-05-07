@@ -6,8 +6,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import graphicsHelper.ImageRotater;
 import movement.SelfPropelled;
+import movementGraphics.ImageRotater;
 
 public class PlayerSword extends SelfPropelled{
 	private BufferedImage origSprite;

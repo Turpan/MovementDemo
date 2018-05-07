@@ -7,10 +7,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import graphicsHelper.ImageRotater;
 import movement.Entity;
 import movement.GameListener;
 import movement.Projectile;
+import movementGraphics.ImageRotater;
 import paintedPanel.PaintedPanel;
 
 public class EnemyBullet extends Projectile{

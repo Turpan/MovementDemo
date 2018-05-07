@@ -6,8 +6,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import graphicsHelper.ImageRotater;
 import movement.SelfPropelled;
+import movementGraphics.ImageRotater;
 
 public class PlayerTurret extends SelfPropelled {
 	static final int XOFFSET = 3;
