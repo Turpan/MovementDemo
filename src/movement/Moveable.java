@@ -3,6 +3,10 @@ package movement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import movement.Vectors.Acceleration;
+import movement.Vectors.Force;
+import movement.Vectors.Velocity;
+
 public abstract class Moveable extends Entity implements Collidable{
 //	int turnSpeed;
 	double timeScale;
@@ -115,7 +119,7 @@ public abstract class Moveable extends Entity implements Collidable{
 		}
 		if (entity instanceof Wall) {
 			var wall= (Wall) entity;
-			outputForce.setMagnitude((getCoR() * wall.getBounciness() *getVelocity().getMagnitude() * Math.pow(getTimeScale(),-2)* Math.sin(Math.toRadians(getVelocity().getDirection() + wall.getAngle())))+0.01); 
+			outputForce.setMagnitude((getCoR() * wall.getBounciness() *getVelocity().getMagnitude() * Math.pow(getTimeScale(),-1)*getMass()* Math.sin(Math.toRadians(getVelocity().getDirection() + wall.getAngle())))+0.01); 
 			outputForce.setDirection(wall.getAngle() - 90);
 			outputForce.setDuration(1);
 			applyForce(outputForce);

@@ -1,4 +1,4 @@
-package movement;
+package movement.Vectors;
 
 public class Velocity extends Vector{
 	public Velocity(double x, double y) {

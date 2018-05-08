@@ -1,4 +1,4 @@
-package movement;
+package movement.Vectors;
 
 public class Force extends Vector {
 	public double duration;

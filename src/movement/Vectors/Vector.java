@@ -1,4 +1,4 @@
-package movement;
+package movement.Vectors;
 
 
 public abstract class Vector {

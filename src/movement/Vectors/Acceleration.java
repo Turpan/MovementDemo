@@ -1,4 +1,4 @@
-package movement;
+package movement.Vectors;
 
 public class Acceleration extends Vector{
 	public double duration; //is decremented everytime the acceleration is called on, and when it runs out, is removed. For continually updating

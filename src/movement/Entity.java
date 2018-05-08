@@ -2,6 +2,8 @@ package movement;
 
 import java.awt.image.BufferedImage;
 
+import movement.Shapes.Shape;
+
 public abstract class Entity {
 	double positionX;
 	double positionY;
@@ -9,6 +11,7 @@ public abstract class Entity {
 	int height;
 	BufferedImage sprite;
 	BufferedImage collisionMap;
+	Shape outline;
 	public BufferedImage getCollisionMap() {
 		return collisionMap;
 	}
@@ -56,5 +59,11 @@ public abstract class Entity {
 	}
 	public double getPositionY() {
 		return positionY;
+	}
+	public void setOutline(Shape outline) {
+		this.outline = outline;
+	}
+	public Shape getOutline() {
+		return outline;
 	}
 }

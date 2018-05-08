@@ -37,23 +37,49 @@ public class CollisionEngine {
 				&& entity1.getPositionY() < bottom2 && bottom1 > entity2.getPositionY()); 
 	}
 	private boolean checkPixelCollision(Entity entity1, Entity entity2) {
-		return true;
-/*		var x = (int) Math.max(entity1.getPositionX(), entity2.getPositionX());
-		var right = (int) Math.min(getEntityRight(entity1), getEntityRight(entity2));
-		var y = (int) Math.max(entity1.getPositionY(), entity2.getPositionY());
-		var bottom = (int) Math.min(getEntityBottom(entity1), getEntityBottom(entity2));
+		var leftEntity = entity1.getPositionX()<entity2.getPositionX() ? entity1:entity2;
+		var topEntity =entity1.getPositionY()<entity2.getPositionY() ? entity1:entity2;
+
+		//top of rectangle of collision, relative screen
+		var xTop = (int) Math.max(entity1.getPositionX(), entity2.getPositionX());
+		var yTop = (int) Math.max(entity1.getPositionY(), entity2.getPositionY());
 		
-		for (int i=x; i<right; i++) {
-			for (int j=y; j<bottom; j++) {
-				var entity1Pixel = new Color(entity1.getCollisionMap().getRGB(x, y));
-				var entity2Pixel = new Color(entity2.getCollisionMap().getRGB(x, y));
+		//dimensions of rectangle of collision
+		var width = (int) Math.min(getEntityRight(entity1), getEntityRight(entity2)) - xTop;
+		var height = (int) Math.min(getEntityBottom(entity1), getEntityBottom(entity2)) - yTop;
+		
+		// coords of rectangle of collision, relative to each entity
+		var xTopInLeft = (int) leftEntity.getPositionX() - xTop;
+		var yTopInTop = (int) topEntity.getPositionY() - yTop;
+		//top is also left, bottom is also right
+		
+		int entity1x = 0;
+		int entity2x = 0;
+		int entity1y = 0;
+		int entity2y = 0;
+		
+		if (entity1.getPositionY()<entity2.getPositionY()) { //if entity 1 is the top entity
+			entity1y = yTopInTop;
+		} else {
+			entity2y = yTopInTop;
+		}if (entity1.getPositionX()<entity2.getPositionX()) { //if entity 1 is the left entity
+			entity1x = xTopInLeft;
+		} else {
+			entity2x = xTopInLeft;
+		}
+		//note, no need to assign values to the right/bottom entites, as they default to 0, and that's what they need to be.
+		for (int i=0; i<width; i++) {
+			for (int j=0; j<height; j++) {
+				var entity1Pixel = new Color(entity1.getCollisionMap().getRGB(entity1x, entity1y));
+				var entity2Pixel = new Color(entity2.getCollisionMap().getRGB(entity2x, entity2y));
 				if (entity1Pixel.equals(bitMaskColor) && entity2Pixel.equals(bitMaskColor)) {
 					return true;
 				}
-				
+				entity1y++;entity2y++;
+			entity1x++;entity2x++;
 			}
 		}
-		return false;*/
+		return false;
 	}
 	private double getEntityRight(Entity entity) {
 		return entity.getPositionX() + entity.getWidth();
