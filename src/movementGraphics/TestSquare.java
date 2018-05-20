@@ -9,10 +9,10 @@ import javax.imageio.ImageIO;
 import movement.Entity;
 
 public class TestSquare extends Entity {
-	public TestSquare() {
+	public TestSquare() throws MalformedEntityException {
 		loadImage();
 	}
-	public void loadImage() {
+	public void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
 		    img = ImageIO.read(new File("graphics/testsquare.png"));

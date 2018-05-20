@@ -1,6 +1,6 @@
 package movement.Shapes;
 
-public class Rectangle implements Shape{
+public class Rectangle implements OutlineShape{
 	double width;
 	double height;
 	
@@ -23,8 +23,8 @@ public class Rectangle implements Shape{
 	public double getCoDmodifier() {							//impacts CoD. The shape of the object has an effect!
 		return 0.0;
 	}
-	public double getAngleAt(int xPosition, int yPosition) {
-		return 0.0;
+	public int getAngleAt(int xPosition, int yPosition) {
+		return 0;
 	}
 }
 

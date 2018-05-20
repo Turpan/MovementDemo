@@ -1,13 +1,15 @@
-package movementGraphics;
+package movementTest;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import movement.Entity.MalformedEntityException;
 
-public class ShadowMain {
+public class DemoMain {
 	static JFrame frame;
-	static ShadowTest test;
+	static JPanel mainPanel;
+	static MovementDemo demo;
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -20,8 +22,9 @@ public class ShadowMain {
         });
 	}
 	static void createAndShowGUI() throws MalformedEntityException {
-		test = new ShadowTest();
-		test.setBounds(0, 0, 600, 600);
+		mainPanel = new JPanel();
+		mainPanel.setLayout(null);
+		mainPanel.setBounds(0, 0, 600, 600);
 		//mainPanel.setBackground(Color.BLUE);
 		frame = new JFrame("Civilisation Clicker");
 		frame.setLayout(null);
@@ -33,6 +36,7 @@ public class ShadowMain {
         frame.setUndecorated(true);
         frame.setVisible(true);
         frame.setResizable(false);
-        frame.add(test);
+        frame.add(mainPanel);
+        demo = new MovementDemo();
 	}
 }

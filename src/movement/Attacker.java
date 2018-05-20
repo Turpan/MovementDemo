@@ -32,8 +32,8 @@ public abstract class Attacker extends SelfPropelled implements Collidable{
 		setInvincibilityCounter(getInvincibilityCounter() - getTimeScale());
 	}
 	@Override
-	public void tick() {
-		super.tick();
+	public void moveTick() {
+		super.moveTick();
 		if (isInvincible()) {
 			invincibilityTick();
 		}

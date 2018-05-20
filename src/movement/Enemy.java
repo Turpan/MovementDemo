@@ -38,9 +38,9 @@ public abstract class Enemy extends Attacker {
 		int y = getDesiredY();
 		return (int) Math.toDegrees(Math.atan2(y - getPositionY(), x - getPositionX()));
 	}
-	public void tick() {
+	public void moveTick() {
 		if (isActive()) {
-			super.tick();
+			super.moveTick();
 			if (canAttack() && attackReady()) {
 				attack();
 			} else if (!attackReady()) {

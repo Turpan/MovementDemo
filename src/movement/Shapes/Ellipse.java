@@ -1,6 +1,6 @@
 package movement.Shapes;
 
-public class Ellipse implements Shape{
+public class Ellipse implements OutlineShape{
 	double width;
 	double height;
 	
@@ -21,9 +21,9 @@ public class Ellipse implements Shape{
 		return height;
 	}
 	public double getCoDmodifier() {							//impacts CoD. The shape of the object has an effect!
-		return 0.0;
+		return 1.0;
 	}
-	public double getAngleAt(int xPosition, int yPosition) {	//uses implicit diff, using the formula x^2/(width/2)^2 + y^2/(height/2)^2 = 1
-		return 0.0;
+	public int getAngleAt(int xPosition, int yPosition) {	//uses implicit diff, using the formula x^2/(width/2)^2 + y^2/(height/2)^2 = 1
+		return (int)Math.toDegrees(Math.atan2((yPosition-(getHeight()/2))/getHeight() , (xPosition-(getWidth()/2))/getWidth()))+90;
 	}
 }

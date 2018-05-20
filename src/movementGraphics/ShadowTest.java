@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import movement.Entity;
+import movement.Entity.MalformedEntityException;
 
 public class ShadowTest extends JPanel implements MouseMotionListener{
 	/**
@@ -22,7 +23,7 @@ public class ShadowTest extends JPanel implements MouseMotionListener{
 	List<Entity> roomContents = new ArrayList<Entity>();
 	ShadowDrawer shadowEngine = new ShadowDrawer(ROOMSIZE);
 	BufferedImage shadow;
-	public ShadowTest() {
+	public ShadowTest() throws MalformedEntityException {
 		this.addMouseMotionListener(this);
 		createEntitys();
 	}
@@ -35,7 +36,7 @@ public class ShadowTest extends JPanel implements MouseMotionListener{
 		}
 		g2d.drawImage(shadow, 0, 0, null);
 	}
-	private void createEntitys() {
+	private void createEntitys() throws MalformedEntityException {
 		var square1 = new TestSquare();
 		var square2 = new TestSquare();
 		var square3 = new TestSquare();

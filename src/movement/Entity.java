@@ -2,7 +2,7 @@ package movement;
 
 import java.awt.image.BufferedImage;
 
-import movement.Shapes.Shape;
+import movement.Shapes.OutlineShape;
 
 public abstract class Entity {
 	double positionX;
@@ -11,12 +11,15 @@ public abstract class Entity {
 	int height;
 	BufferedImage sprite;
 	BufferedImage collisionMap;
-	Shape outline;
+	OutlineShape outline;
 	public BufferedImage getCollisionMap() {
 		return collisionMap;
 	}
-	public void setCollisionMap(BufferedImage collisionMap) {
+	public void setCollisionMap(BufferedImage collisionMap) throws MalformedEntityException {
 		this.collisionMap = collisionMap;
+		if (collisionMap.getWidth() != getWidth() || collisionMap.getHeight() != getHeight()) {
+			throw new MalformedEntityException("collisionMap of different dimensions to sprite");
+		}
 	}
 	public int getWidth() {
 		return width;
@@ -60,10 +63,20 @@ public abstract class Entity {
 	public double getPositionY() {
 		return positionY;
 	}
-	public void setOutline(Shape outline) {
+	public void setOutline(OutlineShape outline) {
 		this.outline = outline;
 	}
-	public Shape getOutline() {
+	public OutlineShape getOutline() {
 		return outline;
+	}
+	
+	
+	
+	public class MalformedEntityException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		public MalformedEntityException (String message) {
+	        super (message);
+	    }
 	}
 }

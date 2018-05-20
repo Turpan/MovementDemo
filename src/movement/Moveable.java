@@ -79,8 +79,11 @@ public abstract class Moveable extends Entity implements Collidable{
 		return (getVelocity().getMagnitude() == 0);
 	}
 	//////////////////////////////////////////////////////////////////////////////////
-	
-	
+	public void stop() {
+		setAccelerations(new ArrayList<Acceleration>());
+		getVelocity().setMagnitude(0);
+	}
+
 	protected void move() {
 		setPositionX((getPositionX() + getVelocity().getX() * getTimeScale()));
 		setPositionY((getPositionY() + getVelocity().getY() * getTimeScale()));
@@ -91,7 +94,11 @@ public abstract class Moveable extends Entity implements Collidable{
 	public void accelerate(Acceleration acceleration) {
 		var nextVelocity = new Velocity (getVelocity().getX() + acceleration.getX() * getTimeScale() , 
 								   		 getVelocity().getY() + acceleration.getY() * getTimeScale());
-		setVelocity(nextVelocity);
+		if (nextVelocity.getMagnitude() < 0.1) {
+			stop();
+		}else {
+			setVelocity(nextVelocity);
+		}
 	}
 	protected void applyFriction() {
 		if (!isStopped()){
@@ -100,45 +107,23 @@ public abstract class Moveable extends Entity implements Collidable{
 			double direction = getVelocity().getDirection() + 180;
 			friction.setMagnitude(magnitude);
 			friction.setDirection(direction);
-			friction.setDuration(1);
 			applyForce(friction);
 		}
 		
-	}
-	@Override
-	public void collisionWith(Entity entity) {
-		var outputForce = new Force();
-		if (entity instanceof Moveable) {
-			var collider= (Moveable) entity;
-			var relativeSpeedCollidee = getVelocity().getMagnitude()* Math.sin(Math.toRadians(getVelocity().getDirection() + collider.getVelocity().getDirection()));
-			var relativeSpeedCollider = collider.getVelocity().getMagnitude() * Math.sin(Math.toRadians(collider.getVelocity().getDirection() + getVelocity().getDirection()));
-			outputForce.setMagnitude(((getMass() * relativeSpeedCollidee + collider.getMass() * relativeSpeedCollider + (collider.getCoR() + getCoR())/2 *getMass() *(relativeSpeedCollidee-relativeSpeedCollider)) *Math.pow(getTimeScale(),-1))/getMass() + collider.getMass());
-			outputForce.setDirection(relativeSpeedCollider);
-			outputForce.setDuration(1);
-			applyForce(outputForce);
-		}
-		if (entity instanceof Wall) {
-			var wall= (Wall) entity;
-			outputForce.setMagnitude((getCoR() * wall.getBounciness() *getVelocity().getMagnitude() * Math.pow(getTimeScale(),-1)*getMass()* Math.sin(Math.toRadians(getVelocity().getDirection() + wall.getAngle())))+0.01); 
-			outputForce.setDirection(wall.getAngle() - 90);
-			outputForce.setDuration(1);
-			applyForce(outputForce);
-		}
-	}
+	}	
 	//////////////////////////////////////////////////////////////////////////////////
-	public void tick() {
-		applyFriction();
+	public void accelerationTick() {	//apply accelerations to velocity. This will happen /after/ movetick, technically creating a small 
+										//disconnect, whereby an object will move /before/ it accelerates, but this is very small, and self consistent
 		Iterator<Acceleration> iter = getAccelerations().iterator();
 		Acceleration acceleration;
 		while (iter.hasNext()) {	
 			acceleration = iter.next();
-			if (acceleration.getDuration() <= 0) {
-				iter.remove();
-			}
 			accelerate(acceleration);
-			acceleration.tick();
+			iter.remove();
 		}
-		System.out.println(getVelocity().getMagnitude());
+	}
+	public void moveTick() { //apply all forces that are applied per tick, move object 
+		applyFriction();
 		move();
 	}
 }

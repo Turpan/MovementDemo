@@ -21,13 +21,8 @@ public abstract class SelfPropelled extends Moveable {
 		var movementForce = new Force();
 		movementForce.setMagnitude(baseMoveForce);
 		movementForce.setDirection(direction);
-		movementForce.setDuration(1);
 		applyForce(movementForce);
 		
-	}
-	public void stop() {
-		accelerations = new ArrayList<Acceleration>();
-		getVelocity().setMagnitude(0);
 	}
 
 }
