@@ -10,9 +10,9 @@ import movement.Wall;
 
 public class TestWall extends Wall{
 	
-	public TestWall(int angle, double bounciness) {
+	public TestWall(int angle) {
 		setAngle (angle);
-		setBounciness(bounciness);
+		setBounciness(1);
 	}
 	
 	public void loadLongImage() throws MalformedEntityException {

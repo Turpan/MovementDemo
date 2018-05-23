@@ -106,25 +106,23 @@ public class CollisionEngine {
 		}
 	}
 	private static void collisionBetween(Moveable object1, Moveable object2, int[] collisionLocation) {
-		var collisionForce1 = new Force();
-		var collisionForce2 = new Force();
+
 		var outputForce1 = new Force();
 		var outputForce2 = new Force();
 		
 		int collisionAngle1 =  object1.getOutline().getAngleAt(collisionLocation[0], collisionLocation[1]);
 		int collisionAngle2 = object2.getOutline().getAngleAt(collisionLocation[2], collisionLocation[3]);
 		
-		var CoR_Effect = (1 + (object1.getCoR() * object2.getCoR()))/2; //you gotta average it with 1, because otherwise a value of 0 would violate conservation of momentum. To get objects that didn't pass through things (barring the anti-acceleration forces), you'd need a CoR_Effect of -1)
+		var CoR_Effect = (1+(object1.getCoR() * object2.getCoR()))/2; //you gotta average it with 1, because otherwise a value of 0 would violate conservation of momentum. To get objects that didn't pass through things (barring the anti-acceleration forces), you'd need a CoR_Effect of -1)
 		var timeScaleInverse = 1/((object1.getTimeScale()+ object2.getTimeScale())/2); //this averages the two timescales? Honestly, collisions between objects of different timescales don't /really/ make sense. Pretty sure it's planned to have timescale be universal.
 		//^^^^^ FIX TIMESCALES, MUST BE UNIVERSAL!! ^^^^^^
 		double massRatio1 = object1.getMass()/object2.getMass();
 		double massRatio2 = 1/massRatio1;
-	
-		collisionForce1.setMagnitude(CoR_Effect *timeScaleInverse * Vector.getComponentInto(object1.getVelocity(),collisionAngle2)* object1.getMass() * (1-(1-massRatio1)/(1+massRatio1))+0.01);
-		collisionForce1.setDirection(Vector.vectorMovingAway(object1.getVelocity() ,collisionAngle2) ? collisionAngle1-90 : collisionAngle1+90);
-		collisionForce2.setMagnitude(CoR_Effect * timeScaleInverse* Vector.getComponentInto(object2.getVelocity(),collisionAngle1)* object2.getMass() * (1-(1-massRatio2)/(1+massRatio2))+0.01);
-		collisionForce2.setDirection(Vector.vectorMovingAway(object2.getVelocity() ,collisionAngle1) ? collisionAngle2-90 : collisionAngle2+90);
-		
+		System.out.println(CoR_Effect);
+		var collisionForce1 = new Force(CoR_Effect *timeScaleInverse * Vector.getComponentInto(object1.getVelocity(),collisionAngle2)* object1.getMass() * (1-((1-massRatio1)/(1+massRatio1))),
+										Vector.vectorMovingAway(object1.getVelocity() ,collisionAngle2) ? collisionAngle1-90 : collisionAngle1+90);
+		var collisionForce2 = new Force(CoR_Effect * timeScaleInverse* Vector.getComponentInto(object2.getVelocity(),collisionAngle1)* object2.getMass() * (1-((1-massRatio2)/(1+massRatio2))),
+										Vector.vectorMovingAway(object2.getVelocity() ,collisionAngle1) ? collisionAngle2-90 : collisionAngle2+90);
 		
 		var temp = new Force();
 		for (Acceleration a: object1.getAccelerations()) {
@@ -138,20 +136,21 @@ public class CollisionEngine {
 			collisionForce2.addVector(temp);
 		}
 		
-		outputForce1.addVector(collisionForce1); outputForce2.addVector(collisionForce2);
+		outputForce1.addVector(collisionForce1);
+		outputForce2.addVector(collisionForce2);
 		collisionForce1.setDirection(collisionForce1.getDirection() + 180);
 		collisionForce2.setDirection(collisionForce2.getDirection() + 180);
-		outputForce1.addVector(collisionForce2); outputForce2.addVector(collisionForce1);
+		outputForce1.addVector(collisionForce2);
+		outputForce2.addVector(collisionForce1);
 		
 		object1.applyForce(outputForce1);
 		object2.applyForce(outputForce2);
 	}
 	private static void wallCollision(Wall w, Moveable m) {
-		var outputForce = new Force();
-		outputForce.setMagnitude((1+m.getCoR()) * w.getBounciness() *Vector.getComponentInto(m.getVelocity(), w.getAngle()) * Math.pow(m.getTimeScale(),-1)*m.getMass()); 
-		outputForce.setDirection(w.getAngle() - 90);
+		var outputForce = new Force((1+m.getCoR()) * w.getBounciness() *Vector.getComponentInto(m.getVelocity(), w.getAngle()) * Math.pow(m.getTimeScale(),-1)*m.getMass(),
+									w.getAngle() - 90);
+		var temp = new Force();
 		for (Acceleration a: m.getAccelerations()) {
-			var temp = new Force();
 			temp.setMagnitude(m.getMass()*Vector.getComponentInto(a, w.getAngle()));
 			temp.setDirection(w.getAngle() - 90);
 			outputForce.addVector(temp);

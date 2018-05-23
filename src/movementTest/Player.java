@@ -13,16 +13,16 @@ import movement.Vectors.Force;
 
 public class Player extends SelfPropelled implements Dashing {
 
-	static final double MASS = 60;
-	static final double BASEMOVEFORCE = 300;
+	static final double MASS =20;
+	static final double BASEMOVEFORCE = 100;
 	static final double TIMESCALE = 0.1;
-	static final double COEFFICIENT_OF_RESTITUTION = 0.9;	//'bounciness' Used for collisions. See Controllable. Not the whole story, as I've attempted to disallow objects enterring other objects, regardless of CoR
-	static final double COEFFICIENT_OF_DRAG = 0.05;			//coefficient of proportionality between quadratic drag and speed
-	static final double  COEFFICIENT_OF_FRICTION = 0.5; 	//the coefficient of proportionality between the constant drag and mass
+	static final double COEFFICIENT_OF_RESTITUTION = 1;	//'bounciness' Used for collisions. See Controllable. Not the whole story, as I've attempted to disallow objects enterring other objects, regardless of CoR
+	static final double COEFFICIENT_OF_DRAG = 0.0;			//coefficient of proportionality between quadratic drag and speed
+	static final double  COEFFICIENT_OF_FRICTION = 0.0; 	//the coefficient of proportionality between the constant drag and mass
 	static final int DASHCOOLDOWN = 10;
 	static final int DASHLENGTH = 10;
 	static final int DASHMAGNITUDE = 1000;
-	static Force DASHFORCE = new Force(); 
+	static Force DASHFORCE = new Force(DASHMAGNITUDE, 0); 
 	
 	int dashCoolDown;
 	double dashDirection;
@@ -36,7 +36,6 @@ public class Player extends SelfPropelled implements Dashing {
 		setCoF(COEFFICIENT_OF_FRICTION);
 		setCoD(COEFFICIENT_OF_DRAG);
 		setCoR(COEFFICIENT_OF_RESTITUTION);
-		DASHFORCE.setMagnitude(DASHMAGNITUDE);
 		loadImage();
 		setOutline((OutlineShape)(new Ellipse(getWidth(), getHeight())));
 	}

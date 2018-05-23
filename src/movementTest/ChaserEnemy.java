@@ -14,12 +14,12 @@ import movement.Shapes.OutlineShape;
 
 public class ChaserEnemy extends Enemy{
 
-	static final double MASS = 6;
+	static final double MASS = 20;
 	static final double BASEMOVEFORCE = 40;
 	static final double TIMESCALE = 0.1;
 	static final double COEFFICIENT_OF_RESTITUTION = 1;	
-	static final double COEFFICIENT_OF_DRAG = 0.05;			
-	static final double  COEFFICIENT_OF_FRICTION = 0.5; 
+	static final double COEFFICIENT_OF_DRAG = 0.0;			
+	static final double  COEFFICIENT_OF_FRICTION = 0; 
 	
 	public ChaserEnemy(GameListener listener) throws MalformedEntityException {
 		super(listener);

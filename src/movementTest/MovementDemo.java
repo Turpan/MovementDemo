@@ -15,7 +15,6 @@ import movement.CollisionEngine;
 import movement.Entity;
 import movement.Entity.MalformedEntityException;
 import movement.GameListener;
-import movement.Vectors.Acceleration;
 import paintedPanel.PaintedPanel;
 
 public class MovementDemo implements KeyListener, ActionListener, GameListener{
@@ -78,10 +77,10 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		longWallRLabel.setBounds(580,0, 20, 600);
 		wideWallTLabel.setBounds(0,0, 600, 20);
 		wideWallBLabel.setBounds(0,580, 600, 20);
-		longWallL = new TestWall(90, 0.9);
-		longWallR = new TestWall(270,0.9);
-		wideWallT = new TestWall(180,0.9);
-		wideWallB = new TestWall( 0, 0.9);
+		longWallL = new TestWall(90);
+		longWallR = new TestWall(270);
+		wideWallT = new TestWall(180);
+		wideWallB = new TestWall( 0);
 		longWallL.setPositionX(0);
 		longWallL.setPositionY(0);
 		longWallR.setPositionX(580);
@@ -166,6 +165,7 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		player.moveTick();
 		chaser.moveTick();
 		collisionCheck.checkCollision(roomContents);
+		System.out.println(player.getVelocity().getMagnitude()*player.getVelocity().getMagnitude() + chaser.getVelocity().getMagnitude()* chaser.getVelocity().getMagnitude());
 		player.accelerationTick();
 		chaser.accelerationTick();
 		chaserLabel.setBounds((int) Math.round(chaser.getPositionX()), (int) Math.round(chaser.getPositionY()), chaser.getWidth(), chaser.getHeight());

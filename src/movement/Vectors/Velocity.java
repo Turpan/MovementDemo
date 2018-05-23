@@ -1,8 +1,8 @@
 package movement.Vectors;
 
 public class Velocity extends Vector{
-	public Velocity(double x, double y) {
-		super(x,y);
+	public Velocity(double magnitude, double direction) {
+		super(magnitude,direction);
 	}
 	public Velocity() {
 		super();

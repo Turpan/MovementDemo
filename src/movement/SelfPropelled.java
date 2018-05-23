@@ -1,8 +1,5 @@
 package movement;
 
-import java.util.ArrayList;
-
-import movement.Vectors.Acceleration;
 import movement.Vectors.Force;
 
 public abstract class SelfPropelled extends Moveable {
@@ -18,11 +15,7 @@ public abstract class SelfPropelled extends Moveable {
 		this.baseMoveForce = baseMoveForce;
 	}
 	public void locomote(int direction) {
-		var movementForce = new Force();
-		movementForce.setMagnitude(baseMoveForce);
-		movementForce.setDirection(direction);
-		applyForce(movementForce);
-		
+		applyForce(new Force(baseMoveForce, direction));
 	}
 
 }

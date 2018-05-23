@@ -1,13 +1,11 @@
 package movement.Vectors;
 
 public class Force extends Vector {
-	public boolean infinite;
-	public Force(double x, double y) {
-		super(x,y);
-		infinite = false;
+	public Force(double magnitude, double direction) {
+		super(magnitude,direction);
 	}
 	public Force() {
-		this(0.0,0.0);
+		super();
 	}
 	public Acceleration getAcceleration(double mass) {
 		var output = new Acceleration();

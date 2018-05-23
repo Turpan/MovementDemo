@@ -6,9 +6,9 @@ public abstract class Vector {
 	double xComponent;
 	double yComponent;
 
-	public Vector(double xMagnitude, double yMagnitude) {
-		setX(xMagnitude);
-		setY(yMagnitude);
+	public Vector(double magnitude, double direction) {
+		setMagnitude(magnitude);
+		setDirection(direction);
 	}
 	public Vector() {
 		setX(0);
@@ -30,13 +30,11 @@ public abstract class Vector {
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	public double getDirection() {
-		return (double) Math.toDegrees(Math.atan2(getY(),getX()));
+		return Math.toDegrees(Math.atan2(getY(),getX()));
 	}
 	public void setDirection(double direction) {
 		double speed = getMagnitude();
-		if (speed == 0) {
-		//	throw new ArithmeticException("can't store direction when speed == 0");
-		}else { 
+		if (speed !=0){ 
 			setX(speed * Math.cos(Math.toRadians(direction)));
 			setY(speed * Math.sin(Math.toRadians(direction)));
 		}

@@ -92,8 +92,9 @@ public abstract class Moveable extends Entity implements Collidable{
 		addAcceleration(force.getAcceleration(getMass()));
 	}
 	public void accelerate(Acceleration acceleration) {
-		var nextVelocity = new Velocity (getVelocity().getX() + acceleration.getX() * getTimeScale() , 
-								   		 getVelocity().getY() + acceleration.getY() * getTimeScale());
+		var nextVelocity = new Velocity ();
+		nextVelocity.setX(getVelocity().getX() + acceleration.getX() * getTimeScale());
+		nextVelocity.setY(getVelocity().getY() + acceleration.getY() * getTimeScale());
 		if (nextVelocity.getMagnitude() < 0.1) {
 			stop();
 		}else {
@@ -102,14 +103,9 @@ public abstract class Moveable extends Entity implements Collidable{
 	}
 	protected void applyFriction() {
 		if (!isStopped()){
-			Force friction = new Force ();	
-			double magnitude = getCoF() * getMass()+ getCoD() * Math.pow(getVelocity().getMagnitude(),2);
-			double direction = getVelocity().getDirection() + 180;
-			friction.setMagnitude(magnitude);
-			friction.setDirection(direction);
-			applyForce(friction);
+			applyForce(new Force (getCoF() * getMass()+ getCoD() * Math.pow(getVelocity().getMagnitude(),2),
+								  getVelocity().getDirection() + 180));
 		}
-		
 	}	
 	//////////////////////////////////////////////////////////////////////////////////
 	public void accelerationTick() {	//apply accelerations to velocity. This will happen /after/ movetick, technically creating a small 
