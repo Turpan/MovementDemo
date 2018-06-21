@@ -2,59 +2,49 @@ package movement;
 
 import java.awt.image.BufferedImage;
 
+//import movement.Shapes.OutlineShape;
+
 public abstract class Entity {
-	double positionX;
-	double positionY;
-	int width;
-	int height;
+	double[] position;
+	double[] dimensions;
 	BufferedImage sprite;
-	BufferedImage collisionMap;
-	public BufferedImage getCollisionMap() {
-		return collisionMap;
-	}
-	public void setCollisionMap(BufferedImage collisionMap) {
-		this.collisionMap = collisionMap;
-	}
-	public int getWidth() {
-		return width;
-	}
-	private void setWidth(int width) {
-		if (width < 0) {
-			width = 0;
+	//OutlineShape outline;	//determines collisions. Technically, doesn't at all map to the sprite
+
+	public void setDimensions(double[] dimensions) {
+		for (double dim : dimensions) {
+			if (dim <0) {dim = 0;}
 		}
-		this.width = width;
+		this.dimensions= dimensions;
 	}
-	public int getHeight() {
-		return height;
-	}
-	private void setHeight(int height) {
-		if (height < 0) {
-			height = 0;
-		}
-		this.height = height;
+	public double[] getDimensions() {
+		return dimensions;
 	}
 	public BufferedImage getSprite() {
 		return sprite;
 	}
 	public void setSprite(BufferedImage sprite) {
-		setWidth(sprite.getWidth());
-		setHeight(sprite.getHeight());
 		this.sprite = sprite;
 	}
-	public void updatePosition(double positionX, double positionY) {
-		setPositionX(positionX);
-		setPositionY(positionY);
+	public void setPosition(double[] position) {
+		this.position = position;
 	}
-	public void setPositionX(double positionX) {
-		this.positionX = positionX;
+	public double[] getPosition() {
+		return position;
 	}
-	public void setPositionY(double positionY) {
-		this.positionY = positionY;
+	/*public void setOutline(OutlineShape outline) {
+		this.outline = outline;
 	}
-	public double getPositionX() {
-		return positionX;
-	}
-	public double getPositionY() {
-		return positionY;
+	public OutlineShape getOutline() {
+		return outline;
+	}*/
+	
+	
+	
+	public class MalformedEntityException extends Exception {
+		private static final long serialVersionUID = 1L;
+
+		public MalformedEntityException (String message) {
+	        super (message);
+	    }
 	}
 }
