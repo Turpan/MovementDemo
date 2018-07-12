@@ -11,26 +11,27 @@ import movement.GameListener;
 import movement.Projectile;
 import movement.Shapes.Ellipse;
 import movement.Shapes.OutlineShape;
+import movement.Vectors.Vector.MalformedVectorException;
 
 public class ChaserEnemy extends Enemy{
 
-	static final double MASS = 20;
+	static final double MASS = 10;
 	static final double BASEMOVEFORCE = 40;
-	static final double TIMESCALE = 0.1;
 	static final double COEFFICIENT_OF_RESTITUTION = 1;	
-	static final double COEFFICIENT_OF_DRAG = 0.0;			
-	static final double  COEFFICIENT_OF_FRICTION = 0; 
+	static final double COEFFICIENT_OF_DRAG = 0.05;			
+	static final double  COEFFICIENT_OF_FRICTION = 0.5; 
 	
-	public ChaserEnemy(GameListener listener) throws MalformedEntityException {
+	public ChaserEnemy(GameListener listener) throws MalformedEntityException, MalformedVectorException {
 		super(listener);
 		setMass(MASS);
 		setBaseMoveForce(BASEMOVEFORCE);
-		setTimeScale(TIMESCALE);
 		setCoF(COEFFICIENT_OF_FRICTION);
 		setCoD(COEFFICIENT_OF_DRAG);
 		setCoR(COEFFICIENT_OF_RESTITUTION);
 		loadImage();
-		setOutline((OutlineShape)(new Ellipse(getWidth(), getHeight())));
+		setDimensions(new double[] {50,50,50});
+		setOutline((OutlineShape)(new Ellipse(getDimensions())));
+		getOutline().initialiseCollisionNet();
 	}
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
@@ -39,22 +40,11 @@ public class ChaserEnemy extends Enemy{
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		BufferedImage img2 = null;
-		try {
-		    img2 = ImageIO.read(new File("graphics/evilman-bitmask.png"));
-		} catch (IOException e) {
-			System.exit(1);
-		}
 		setSprite(img);
-		setCollisionMap(img2);
 	}
 	@Override
-	public int getDesiredX() {
-		return getListener().getPlayerLocation().width;
-	}
-	@Override
-	public int getDesiredY() {
-		return getListener().getPlayerLocation().height;
+	public float[] getDesiredPosition() {
+		return new float[] {getListener().getPlayerLocation().width, getListener().getPlayerLocation().height,0};
 	}
 	@Override
 	public boolean isActive() {

@@ -15,13 +15,15 @@ import movement.CollisionEngine;
 import movement.Entity;
 import movement.Entity.MalformedEntityException;
 import movement.GameListener;
+import movement.Vectors.Vector;
+import movement.Vectors.Vector.MalformedVectorException;
 import paintedPanel.PaintedPanel;
 
 public class MovementDemo implements KeyListener, ActionListener, GameListener{
-	static final int[][] directionTable = new int[][]
-			{{225, 270, 315},
-			{180, -1, 0},
-			{135, 90, 45}};
+	static final double[][][] directionTable = new double[][][]
+			{{{-0.7071,-0.7071,0}, {0,-1,0}, {0.7071,-0.7071,0}},
+			{{-1,0,0},null, {1,0,0}},
+			{{-0.7071,0.7071,0}, {0,1,0}, {0.7071,0.7071,0}}};
 	boolean rightKey;
 	boolean leftKey;
 	boolean upKey;
@@ -29,12 +31,14 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 	int counter;
 	PaintedPanel playerLabel;
 	PaintedPanel chaserLabel;
+	PaintedPanel chaserLabel2;
 	PaintedPanel longWallLLabel;
 	PaintedPanel longWallRLabel;
 	PaintedPanel wideWallTLabel;
 	PaintedPanel wideWallBLabel;
 	Player player;
 	ChaserEnemy chaser;
+	ChaserEnemy chaser2;
 	Timer tickTimer;
 	TestWall longWallL;
 	TestWall longWallR;
@@ -42,11 +46,11 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 	TestWall wideWallB;
 	List<Entity> roomContents = new ArrayList<Entity>();
 	CollisionEngine collisionCheck;
-	MovementDemo() throws MalformedEntityException {
+	MovementDemo() throws MalformedEntityException, MalformedVectorException {
 		createVariables();
 	}
 
-	private void createVariables() throws MalformedEntityException {
+	private void createVariables() throws MalformedEntityException, MalformedVectorException {
 		DemoMain.frame.requestFocus();
 		DemoMain.frame.addKeyListener(this);
 		playerLabel = new PaintedPanel();
@@ -55,16 +59,20 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		playerLabel.bgImage = new ImageIcon(player.getSprite());
 		tickTimer = new Timer(10, this);
 		collisionCheck = new CollisionEngine();
-		player.setPositionX(19);
-		player.setPositionY(19);
-		playerLabel.setBounds(19, 19, 50, 50);
+		player.setPosition(new float[] {-10,50,50});
+		playerLabel.setBounds(-20, 50, 50, 50);
 		chaserLabel = new PaintedPanel();
 		chaserLabel.setOpaque(false);
 		chaser = new ChaserEnemy(this);
-		chaser.setPositionX(300);
-		chaser.setPositionY(300);
+		chaser.setPosition(new float[] {400,400,50});
 		chaserLabel.bgImage = new ImageIcon(chaser.getSprite());
-		chaserLabel.setBounds(300, 300, 80, 80);
+		chaserLabel.setBounds(100, 49, 50, 50);
+		chaserLabel2 = new PaintedPanel();
+		chaserLabel2.setOpaque(false);
+		chaser2 = new ChaserEnemy(this);
+		chaser2.setPosition(new float[] {400,500,50});
+		chaserLabel2.bgImage = new ImageIcon(chaser2.getSprite());
+		chaserLabel2.setBounds(100, 49, 50, 50);
 		longWallLLabel = new PaintedPanel();
 		longWallRLabel = new PaintedPanel();
 		wideWallTLabel = new PaintedPanel();
@@ -77,41 +85,39 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		longWallRLabel.setBounds(580,0, 20, 600);
 		wideWallTLabel.setBounds(0,0, 600, 20);
 		wideWallBLabel.setBounds(0,580, 600, 20);
-		longWallL = new TestWall(90);
-		longWallR = new TestWall(270);
-		wideWallT = new TestWall(180);
-		wideWallB = new TestWall( 0);
-		longWallL.setPositionX(0);
-		longWallL.setPositionY(0);
-		longWallR.setPositionX(580);
-		longWallR.setPositionY(0);
-		wideWallT.setPositionX(0);
-		wideWallT.setPositionY(0);
-		wideWallB.setPositionX(0);
-		wideWallB.setPositionY(580);
+		longWallL = new TestWall(new Vector(1, new double[] {1,0,0}));
+		longWallR = new TestWall(new Vector(1, new double[] {-1,0,0}));
+		wideWallT = new TestWall(new Vector(1, new double[] {0,1,0}));
+		wideWallB = new TestWall(new Vector(1, new double[] {0,-1,0}));
+		longWallL.setPosition(new float[] {0,0,-35000});
+		longWallR.setPosition(new float[] {580,0,-35000});
+		wideWallT.setPosition(new float[] {0,0,-35000});
+		wideWallB.setPosition(new float[] {0,580,-35000});
 		longWallL.loadLongImage();
 		longWallR.loadLongImage();
 		wideWallT.loadWideImage();
 		wideWallB.loadWideImage();
-		longWallLLabel.bgImage = new ImageIcon(longWallL.getSprite());
+		longWallLLabel.bgImage = new ImageIcon(longWallL.getSprite()); 
 		longWallRLabel.bgImage = new ImageIcon(longWallR.getSprite());
 		wideWallTLabel.bgImage = new ImageIcon(wideWallT.getSprite());
 		wideWallBLabel.bgImage = new ImageIcon(wideWallB.getSprite());
 		DemoMain.mainPanel.add(playerLabel);
 		DemoMain.mainPanel.add(chaserLabel);
+		DemoMain.mainPanel.add(chaserLabel2);
 		DemoMain.mainPanel.add(longWallLLabel);
 		DemoMain.mainPanel.add(longWallRLabel);
 		DemoMain.mainPanel.add(wideWallTLabel);
 		DemoMain.mainPanel.add(wideWallBLabel);
 		roomContents.add(player);
 		roomContents.add(chaser);
+		roomContents.add(chaser2);
 		roomContents.add(longWallL);
 		roomContents.add(longWallR);
 		roomContents.add(wideWallT);
 		roomContents.add(wideWallB);
 		tickTimer.start();
 	}
-	int calculateDirection() {
+	double[] calculateDirection() {
 		int x = 1;
 		int y = 1;
 		if (upKey) y -= 1;
@@ -120,8 +126,8 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		if (rightKey) x += 1;
 		return directionTable[y][x];
 	}
-	@Override
-	public void keyPressed(KeyEvent e) {
+	
+	public void keyPressed(KeyEvent e){
 		if (e.getKeyCode() == KeyEvent.VK_W) {
 			upKey = true;
 		} else if (e.getKeyCode() == KeyEvent.VK_S) {
@@ -130,9 +136,19 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 			leftKey = true;
 		} else if (e.getKeyCode() == KeyEvent.VK_D) {
 			rightKey = true;
-		} else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			if (calculateDirection() > -1) {
-				player.dash(calculateDirection());
+		} else if (e.getKeyCode() == KeyEvent.VK_P) {
+			try {
+				player.stop();
+			} catch (MalformedVectorException e1) {
+				e1.printStackTrace();
+			}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				try {
+					player.dash(calculateDirection());
+				} catch (MalformedVectorException e1) {
+					e1.printStackTrace();
+				
 			}
 		}
 	}
@@ -159,24 +175,32 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		counter ++;
-		if ((rightKey || leftKey || upKey || downKey) && calculateDirection() > -1) {
+		try {
+		if ((rightKey || leftKey || upKey || downKey) && calculateDirection() != null) {
 			player.locomote(calculateDirection());
 		} 
-		player.moveTick();
-		chaser.moveTick();
+//		double tmp = 0;
+//		for (int i=0;i<3;i++) {
+//		tmp += Math.pow(player.getVelocity().getMagnitude(),2) + Math.pow(chaser.getVelocity().getMagnitude(),2) + Math.pow(chaser2.getVelocity().getMagnitude(),2);
+//		}System.out.println(tmp);
+		player.tick();
+		chaser.tick();
+		chaser2.tick();
 		collisionCheck.checkCollision(roomContents);
-		System.out.println(player.getVelocity().getMagnitude()*player.getVelocity().getMagnitude() + chaser.getVelocity().getMagnitude()* chaser.getVelocity().getMagnitude());
-		player.accelerationTick();
-		chaser.accelerationTick();
-		chaserLabel.setBounds((int) Math.round(chaser.getPositionX()), (int) Math.round(chaser.getPositionY()), chaser.getWidth(), chaser.getHeight());
-		playerLabel.setBounds((int) Math.round(player.getPositionX()), (int) Math.round(player.getPositionY()), player.getWidth(), player.getHeight());
+		} catch (MalformedVectorException | MalformedEntityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		chaserLabel.setBounds((int) Math.round(chaser.getPosition()[0]), (int) Math.round(chaser.getPosition()[1]), (int)chaser.getDimensions()[0], (int)chaser.getDimensions()[1]);
+		chaserLabel2.setBounds((int) Math.round(chaser2.getPosition()[0]), (int) Math.round(chaser2.getPosition()[1]), (int)chaser2.getDimensions()[0], (int)chaser2.getDimensions()[1]);
+		playerLabel.setBounds((int) Math.round(player.getPosition()[0]), (int) Math.round(player.getPosition()[1]), (int)player.getDimensions()[0], (int)player.getDimensions()[1]);
 		DemoMain.mainPanel.repaint();
 		
 	}
 
 	@Override
 	public Dimension getPlayerLocation() {
-		return new Dimension((int) player.getPositionX(), (int) player.getPositionY());
+		return new Dimension((int) player.getPosition()[0], (int) player.getPosition()[1]);
 	}
 
 	@Override

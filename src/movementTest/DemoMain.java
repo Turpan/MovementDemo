@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import movement.Entity.MalformedEntityException;
+import movement.Vectors.Vector.MalformedVectorException;
 
 public class DemoMain {
 	static JFrame frame;
@@ -15,13 +16,13 @@ public class DemoMain {
             public void run() {
                 try {
 					createAndShowGUI();
-				} catch (MalformedEntityException e) {
+				} catch (MalformedEntityException | MalformedVectorException e) {
 					e.printStackTrace();
 				}
             }
         });
 	}
-	static void createAndShowGUI() throws MalformedEntityException {
+	static void createAndShowGUI() throws MalformedEntityException, MalformedVectorException {
 		mainPanel = new JPanel();
 		mainPanel.setLayout(null);
 		mainPanel.setBounds(0, 0, 600, 600);

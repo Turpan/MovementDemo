@@ -10,34 +10,34 @@ import movement.Shapes.*;
 import movement.SelfPropelled;
 import movement.Dashing;
 import movement.Vectors.Force;
+import movement.Vectors.Vector.MalformedVectorException;
 
 public class Player extends SelfPropelled implements Dashing {
 
-	static final double MASS =20;
-	static final double BASEMOVEFORCE = 100;
-	static final double TIMESCALE = 0.1;
+	static final double MASS =10;
+	static final double BASEMOVEFORCE =100;
 	static final double COEFFICIENT_OF_RESTITUTION = 1;	//'bounciness' Used for collisions. See Controllable. Not the whole story, as I've attempted to disallow objects enterring other objects, regardless of CoR
-	static final double COEFFICIENT_OF_DRAG = 0.0;			//coefficient of proportionality between quadratic drag and speed
-	static final double  COEFFICIENT_OF_FRICTION = 0.0; 	//the coefficient of proportionality between the constant drag and mass
+	static final double COEFFICIENT_OF_DRAG = 0.00;			//coefficient of proportionality between quadratic drag and speed
+	static final double  COEFFICIENT_OF_FRICTION = 0.; 	//the coefficient of proportionality between the constant drag and mass
 	static final int DASHCOOLDOWN = 10;
-	static final int DASHLENGTH = 10;
-	static final int DASHMAGNITUDE = 1000;
-	static Force DASHFORCE = new Force(DASHMAGNITUDE, 0); 
+	static final int DASHLENGTH = 3;
+	static final int DASHMAGNITUDE = 2000;
 	
 	int dashCoolDown;
 	double dashDirection;
 	int dashCounter; //this will be used for checking i frames
 	double dashCoolDownCount;
-	public Player() throws MalformedEntityException {
+	Force dashForce;
+	public Player() throws MalformedEntityException, MalformedVectorException {
 		setBaseMoveForce(BASEMOVEFORCE);
 		setMass(MASS);
-		setTimeScale(TIMESCALE);
 		setDashCoolDown(DASHCOOLDOWN);
 		setCoF(COEFFICIENT_OF_FRICTION);
 		setCoD(COEFFICIENT_OF_DRAG);
 		setCoR(COEFFICIENT_OF_RESTITUTION);
 		loadImage();
-		setOutline((OutlineShape)(new Ellipse(getWidth(), getHeight())));
+		setDimensions(new double[] {50,50,50});
+		setOutline(new Ellipse(getDimensions()));
 	}
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
@@ -46,23 +46,17 @@ public class Player extends SelfPropelled implements Dashing {
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		BufferedImage img2 = null;
-		try {
-			img2 = ImageIO.read(new File("graphics/funnyman-bitmask.png"));
-		} catch (IOException e) {
-			System.exit(1);
-		}
 		setSprite(img);
-		setCollisionMap(img2);
 	}
 	@Override
-	public void moveTick(){
+	public void tick() throws MalformedVectorException, MalformedEntityException{
 		dashCoolDownTick();
 		dashTick();
 		if (isDashing()) {
-			applyForce(DASHFORCE);
+			applyForce(dashForce);
+			
 		}		
-		super.moveTick();
+		super.tick();
 	}
 	@Override
 	public boolean canDash() {
@@ -98,20 +92,19 @@ public class Player extends SelfPropelled implements Dashing {
 	}
 	@Override
 	public void dashCoolDownTick() {
-		setDashCoolDownCount(getDashCoolDownCount() - getTimeScale());
+		setDashCoolDownCount(getDashCoolDownCount() - TIMESCALE);
 	}
 	@Override
 	public void dashTick() {
 		setDashCounter(getDashCounter() - 1);
 	}
 	@Override
-	public void dash(int direction) {
+	public void dash(double[] direction) throws MalformedVectorException {
 		if (!canDash()) {
 			return;
 		}
-		stop();
 		setDashCounter(DASHLENGTH);
-		DASHFORCE.setDirection(direction);
+		dashForce = new Force(DASHMAGNITUDE, new double[] {0,-1,0});
 		setDashCoolDownCount(getDashCoolDown());
 	}
 }

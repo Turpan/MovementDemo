@@ -3,21 +3,28 @@ package movement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import movement.Shapes.OutlineShape;
 import movement.Vectors.Acceleration;
 import movement.Vectors.Force;
+import movement.Vectors.Vector;
+import movement.Vectors.Vector.MalformedVectorException;
 import movement.Vectors.Velocity;
 
 public abstract class Moveable extends Entity implements Collidable{
-//	int turnSpeed;
-	double timeScale;
-	Velocity velocity = new Velocity();
-	ArrayList<Acceleration> accelerations = new ArrayList<Acceleration>();
-	double mass; 						// don't let this one equal 0.... If you want a default value, go with 1.
-	double coefficientOfDrag;		
-	double coefficientOfFriction; 	
-	double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies
+
+	private Velocity velocity;
+	final public static double  TIMESCALE = 0.1;
+	private ArrayList<Acceleration> accelerations = new ArrayList<Acceleration>();
+	private double mass; 						// don't let this one equal 0.... If you want a default value, go with 1.
+	private OutlineShape outline;
+	private double coefficientOfDrag;		
+	private double coefficientOfFriction; 	
+	private double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies
 										//because physics doesn't actually have any more direct concept of the 'bounciness' of an object in isolation
 																				//yet...
+	public Moveable () throws MalformedVectorException {
+		setVelocity(new Velocity());
+	}
 	public ArrayList<Acceleration> getAccelerations() {
 		return accelerations;
 	}
@@ -60,66 +67,92 @@ public abstract class Moveable extends Entity implements Collidable{
 	public void setVelocity(Velocity v) {
 		velocity = v;
 	}
-	public double getTimeScale() {
-		return timeScale;
-	}
-	public void setTimeScale(double timeScale) {
-		if (timeScale < 0) {
-			timeScale = 0;
-		}
-		this.timeScale = timeScale;
-	}
 	
-	
-	
-	public void addVelocity(Velocity velocity) {
+	public void addVelocity(Velocity velocity) throws MalformedVectorException {
 		getVelocity().addVector(velocity);
 	}
 	public boolean isStopped() {
 		return (getVelocity().getMagnitude() == 0);
 	}
+	
+	public void setOutline(OutlineShape outline) {
+		this.outline = outline;
+	}
+	public OutlineShape getOutline() {
+		return outline;
+	}
+	public boolean inside(float[] point) {
+		return getOutline().inside(point);
+	}
 	//////////////////////////////////////////////////////////////////////////////////
-	public void stop() {
+	protected void move() throws MalformedEntityException {
+		float[] newPosition = new float[Vector.DIMENSIONS];
+		float[] currentPosition = getPosition();
+		double[] moveCmpnts = getVelocity().getComponents();
+		for (int i=0;i<Vector.DIMENSIONS;i++) {
+			newPosition[i] = (float) (currentPosition[i] + moveCmpnts[i]*TIMESCALE);
+		}
+		setPosition(newPosition);
+	}
+	protected void applyFriction() throws MalformedVectorException {
+		if (!isStopped()){
+			applyForce(new Force (getCoF() * getMass()+ getCoD() * Math.pow(getVelocity().getMagnitude(),2),
+								  Vector.directionOfReverse(getVelocity())));
+		}
+	}	
+	
+	public void stop() throws MalformedVectorException {
 		setAccelerations(new ArrayList<Acceleration>());
 		getVelocity().setMagnitude(0);
 	}
-
-	protected void move() {
-		setPositionX((getPositionX() + getVelocity().getX() * getTimeScale()));
-		setPositionY((getPositionY() + getVelocity().getY() * getTimeScale()));
-	}
-	public void applyForce(Force force) {
+	public void applyForce(Force force) throws MalformedVectorException {
 		addAcceleration(force.getAcceleration(getMass()));
 	}
-	public void accelerate(Acceleration acceleration) {
-		var nextVelocity = new Velocity ();
-		nextVelocity.setX(getVelocity().getX() + acceleration.getX() * getTimeScale());
-		nextVelocity.setY(getVelocity().getY() + acceleration.getY() * getTimeScale());
-		if (nextVelocity.getMagnitude() < 0.1) {
-			stop();
-		}else {
-			setVelocity(nextVelocity);
-		}
+	public void accelerate(Acceleration acceleration) throws MalformedVectorException {
+		var velocity = getVelocity();
+		acceleration.setMagnitude(acceleration.getMagnitude() * TIMESCALE);
+		velocity.addVector(acceleration);
+		setVelocity(velocity);
+		
 	}
-	protected void applyFriction() {
-		if (!isStopped()){
-			applyForce(new Force (getCoF() * getMass()+ getCoD() * Math.pow(getVelocity().getMagnitude(),2),
-								  getVelocity().getDirection() + 180));
+	public void teleport(Vector movement) {
+		float[] newPosition = new float[Vector.DIMENSIONS];
+		float[] currentPosition = getPosition();
+		double[] moveCmpnts = movement.getComponents();
+		for (int i=0;i<Vector.DIMENSIONS;i++) {
+			newPosition[i] = (float) (currentPosition[i] + moveCmpnts[i]);
 		}
-	}	
+		try {
+			setPosition(newPosition);
+		} catch (MalformedEntityException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	//////////////////////////////////////////////////////////////////////////////////
-	public void accelerationTick() {	//apply accelerations to velocity. This will happen /after/ movetick, technically creating a small 
+	public void accelerationTick() throws MalformedVectorException {	//apply accelerations to velocity. This will happen /after/ movetick, technically creating a small 
 										//disconnect, whereby an object will move /before/ it accelerates, but this is very small, and self consistent
 		Iterator<Acceleration> iter = getAccelerations().iterator();
-		Acceleration acceleration;
+		Acceleration acc = new Acceleration();
+		Acceleration tmp;
 		while (iter.hasNext()) {	
-			acceleration = iter.next();
-			accelerate(acceleration);
-			iter.remove();
+			tmp = iter.next();
+			if (tmp.active()) { 
+				acc.addVector(tmp);
+				tmp.deactivate();
+			}else {
+				iter.remove();
+			}
+		}
+		accelerate(acc);
+		if (getVelocity().getMagnitude() < 0.05) {
+			stop();
 		}
 	}
-	public void moveTick() { //apply all forces that are applied per tick, move object 
+	public void tick() throws MalformedVectorException, MalformedEntityException { //apply all forces that are applied per tick, move object 
+		applyForce(new Force(getMass() * 9.81, new double[] {0,1,0}));
 		applyFriction();
+		accelerationTick();
 		move();
 	}
 }

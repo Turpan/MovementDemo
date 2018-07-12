@@ -1,5 +1,7 @@
 package movement;
 
+import movement.Vectors.Vector.MalformedVectorException;
+
 public interface Dashing {
 	boolean canDash();
 	boolean isDashing();
@@ -11,5 +13,5 @@ public interface Dashing {
 	double getDashCoolDownCount();
 	void dashCoolDownTick();
 	void dashTick();
-	void dash(int direction);
+	void dash(double[] direction) throws MalformedVectorException;
 }

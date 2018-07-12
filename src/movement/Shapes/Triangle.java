@@ -1,29 +1,48 @@
 package movement.Shapes;
 
+import java.util.ArrayList;
+
+import movement.Vectors.Vector;
+import movement.Vectors.Vector.MalformedVectorException;
+
 public class Triangle implements OutlineShape {
-	double width;
-	double height;
+	double[] dimensions;
 	
-	public Triangle (double width, double height) {
-		setWidth(width);
-		setHeight(height);
+	public Triangle (double[] dimensions) {
+		setDimensions(dimensions);
 	}
-	public void setWidth(double width) {
-		this.width = width;
+	public void setDimensions(double[] dimensions) {
+		this.dimensions= dimensions;
 	}
-	public void setHeight(double height) {
-		this.height = height;
-	}
-	public double getWidth() {
-		return width;
-	}
-	public double getHeight() {
-		return height;
+	public double[] getDimensions() {
+		return dimensions;
 	}
 	public double getCoDmodifier() {							//impacts CoD. The shape of the object has an effect!
 		return 0.0;
 	}
-	public int getAngleAt(int xPosition, int yPosition) {
+	public Vector getNormal(float[] position) throws MalformedVectorException {
+		return new Vector();
+	}
+	@Override
+	public ArrayList<float[]> getCollisionNet() {
+		return null;
+	}
+	@Override
+	public boolean inside(float[] position) {
+		return false;
+	}
+	@Override
+	public void initialiseCollisionNet() {
+		
+	}
+	@Override
+	public float[] getPointOnEdge(float[] position) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public double getDistanceIn(float[] position) {
+		// TODO Auto-generated method stub
 		return 0;
 	}
 }

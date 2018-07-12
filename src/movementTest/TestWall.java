@@ -7,12 +7,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import movement.Wall;
+import movement.Vectors.Vector;
 
 public class TestWall extends Wall{
 	
-	public TestWall(int angle) {
-		setAngle (angle);
-		setBounciness(1);
+	public TestWall(Vector angle) {
+		setNormal (angle);
+		setBounciness(0);
 	}
 	
 	public void loadLongImage() throws MalformedEntityException {
@@ -22,14 +23,8 @@ public class TestWall extends Wall{
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		BufferedImage img2 = null;
-		try {
-		    img2 = ImageIO.read(new File("graphics/wall-long-bitmask.png"));
-		} catch (IOException e) {
-			System.exit(1);
-		}
 		setSprite(img);
-		setCollisionMap(img2);
+		setDimensions(new double[] {20,600,70000});
 	}
 	public void loadWideImage() throws MalformedEntityException {
 		BufferedImage img = null;
@@ -38,13 +33,7 @@ public class TestWall extends Wall{
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		BufferedImage img2 = null;
-		try {
-		    img2 = ImageIO.read(new File("graphics/wall-wide-bitmask.png"));
-		} catch (IOException e) {
-			System.exit(1);
-		}
 		setSprite(img);
-		setCollisionMap(img2);
+		setDimensions(new double[] {600,20,70000});
 	}
 }

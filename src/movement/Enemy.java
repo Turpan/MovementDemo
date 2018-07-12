@@ -1,10 +1,14 @@
 package movement;
 
+import movement.Vectors.Vector;
+import movement.Vectors.Vector.MalformedVectorException;
+
 public abstract class Enemy extends Attacker {
 	private GameListener listener;
-	double attackCooldown;
-	double attackCounter;
-	public Enemy(GameListener listener) {
+	private double attackCooldown;
+	private double attackCounter;
+	public Enemy(GameListener listener) throws MalformedVectorException {
+		super();
 		if (listener == null) {
 			throw new NullPointerException();
 		}
@@ -33,14 +37,19 @@ public abstract class Enemy extends Attacker {
 	private void setListener(GameListener listener) {
 		this.listener = listener;
 	}
-	protected int calculateDirection() {
-		int x = getDesiredX();
-		int y = getDesiredY();
-		return (int) Math.toDegrees(Math.atan2(y - getPositionY(), x - getPositionX()));
+	protected double[] calculateDirection() {
+		float[] target = getDesiredPosition();
+		float[] location = getPosition();
+		double[] output = new double[Vector.DIMENSIONS];
+		for (int i=0;i<Vector.DIMENSIONS;i++) {
+			output[i] = target[i] - location[i];
+		}
+		return output;
+		
 	}
-	public void moveTick() {
+	public void tick() throws MalformedVectorException, MalformedEntityException {
 		if (isActive()) {
-			super.moveTick();
+			super.tick();
 			if (canAttack() && attackReady()) {
 				attack();
 			} else if (!attackReady()) {
@@ -59,13 +68,12 @@ public abstract class Enemy extends Attacker {
 		setAttackCounter(getAttackCooldown());
 	}
 	protected void attackCoolDownTick() {
-		setAttackCounter(getAttackCounter() - getTimeScale());
+		setAttackCounter(getAttackCounter() - Moveable.TIMESCALE);
 		if (getAttackCounter() < 0) {
 			setAttackCounter(0);
 		}
 	}
-	protected abstract int getDesiredX();
-	protected abstract int getDesiredY();
+	protected abstract float[] getDesiredPosition();
 	public abstract boolean isActive();
 	public abstract boolean canAttack();
 	protected abstract Projectile createAttack();

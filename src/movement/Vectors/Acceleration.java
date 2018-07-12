@@ -1,10 +1,17 @@
 package movement.Vectors;
 
 public class Acceleration extends Vector{
-	public Acceleration(double magnitude, double direction) {
+	boolean active = true;
+	public Acceleration(double magnitude, double[] direction) throws MalformedVectorException {
 		super(magnitude,direction);
 	}
-	public Acceleration(){
+	public Acceleration() throws MalformedVectorException{
 		super();
+	}
+	public boolean active() {
+		return active;
+	}
+	public void deactivate() {
+		active = false;
 	}
 }
