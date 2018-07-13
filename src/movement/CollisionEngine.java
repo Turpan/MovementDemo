@@ -78,7 +78,7 @@ public class CollisionEngine {
 			var collisionLocation1 = exactCollisionPosition((Moveable)object1, object2);
 			var collisionLocation2 = exactCollisionPosition((Moveable)object2, object1);
 			if (collisionLocation1 != null && collisionLocation2 != null) {
-					collisionBetween((Moveable)object1, (Moveable)object2, collisionLocation1, collisionLocation2);
+					moveableCollision((Moveable)object1, (Moveable)object2, collisionLocation1, collisionLocation2);
 			}
 		}
 		if ((object2 instanceof Wall)&&(object1 instanceof Moveable)||((object1 instanceof Wall) && (object2 instanceof Moveable)) ) {
@@ -95,7 +95,7 @@ public class CollisionEngine {
 			}	
 		}
 	}
-	private static void collisionBetween(Moveable object1, Moveable object2, float[] collisionLocation1, float[] collisionLocation2) throws MalformedVectorException {
+	private static void moveableCollision(Moveable object1, Moveable object2, float[] collisionLocation1, float[] collisionLocation2) throws MalformedVectorException {
 		var outputForce1 = new Force();
 		var outputForce2 = new Force();
 		
@@ -106,18 +106,17 @@ public class CollisionEngine {
 		var timeScaleInverse = 1/Moveable.TIMESCALE;
 		
 		double massRatio = object1.getMass()/object2.getMass();
-		var collisionForce1 = new Force(CoR_Effect *timeScaleInverse * Vector.getComponentParallel(object1.getVelocity(),normal2)* object1.getMass() * (1-((1-massRatio)/(1+massRatio))),
+		var collisionForce1 = new Force(CoR_Effect *timeScaleInverse * Vector.getComponentParallel(object1.getVelocity(),normal2)* object1.getMass() * (1+((1-massRatio)/(1+massRatio))),
 										Vector.vectorMovingWith(object1.getVelocity() , normal2) ? Vector.directionOfReverse(normal2) : normal2.getDirection());
-		var collisionForce2 = new Force(CoR_Effect * timeScaleInverse* Vector.getComponentParallel(object2.getVelocity(),normal1)* object2.getMass() * (1+((1-massRatio)/(1+massRatio))),
+		var collisionForce2 = new Force(CoR_Effect * timeScaleInverse* Vector.getComponentParallel(object2.getVelocity(),normal1)* object2.getMass() * (1-((1-massRatio)/(1+massRatio))),
 										Vector.vectorMovingWith(object2.getVelocity() , normal1) ? Vector.directionOfReverse(normal1) : normal1.getDirection());
 		
-		addNormalForces(object1, normal2, collisionForce1);
-		addNormalForces(object2, normal1, collisionForce2);
+//		addNormalForces(object1, normal2, collisionForce1);
+//		addNormalForces(object2, normal1, collisionForce2);
 
 		outputForce1.addVector(collisionForce1);
-		outputForce2.addVector(collisionForce2);
 		outputForce1.addVector(Vector.getReverse(collisionForce2));
-		outputForce2.addVector(Vector.getReverse(collisionForce1));
+		outputForce2.setComponents(Vector.getReverse(outputForce1).getComponents());
 		
 		//assures that if the object gets in, it gets teleported immediately out
 		var relativeCollisionLocation1 = new float[Vector.DIMENSIONS];
@@ -126,6 +125,7 @@ public class CollisionEngine {
 			relativeCollisionLocation1[i] = (float) (collisionLocation1[i] + object1.getPosition()[i]- object2.getPosition()[i]); 
 		}
 		if (object2.getOutline().inside(relativeCollisionLocation1)){
+			System.out.println(" aa " );
 			object1.teleport(new Vector(object2.getOutline().getDistanceIn(relativeCollisionLocation1), normal2.getDirection()));
 		}
 		for (int i = 0; i<Vector.DIMENSIONS; i++) {									
@@ -146,7 +146,7 @@ public class CollisionEngine {
 							new Force((1+m.getCoR() * w.getBounciness()) *Vector.getComponentParallel(m.getVelocity(), w.getNormal()) * (1/Moveable.TIMESCALE) *m.getMass()
 									  ,w.getNormal().getDirection());
 							
-		addNormalForces(m, w.getNormal(), outputForce);
+//		addNormalForces(m, w.getNormal(), outputForce);
 		
 		//assures that if the object gets in, it gets teleported immediately out
 		var edgeCollisionLocation = m.getOutline().getPointOnEdge(collisionLocation);
@@ -173,20 +173,20 @@ public class CollisionEngine {
 				cmpnts[i] =(relativeCollisionLocation[i]);
 			}
 			vectorToPoint.setComponents(cmpnts);
-			m.teleport(new Vector(Vector.getComponentParallel(vectorToPoint, w.getNormal()), w.getNormal().getDirection()));
+			m.teleport(new Vector(Vector.getComponentParallel(vectorToPoint, w.getNormal())-0.1, w.getNormal().getDirection()));
 			
 		}			
 		m.applyForce(outputForce);
 	}
 	
-	private static void addNormalForces(Moveable m, Vector normal, Force outputForce) throws MalformedVectorException {
-		var normalForce = new Force();														
-		for (Acceleration a: m.getAccelerations()) {
-			if (!a.active() && !Vector.vectorMovingWith(a, normal)) {
-			normalForce.setMagnitude(m.getMass()*Vector.getComponentParallel(a, normal));
-			normalForce.setDirection(normal.getDirection());
+//	private static void addNormalForces(Moveable m, Vector normal, Force outputForce) throws MalformedVectorException {
+//		var normalForce = new Force();														
+//		for (Acceleration a: m.getAccelerations()) {
+//			if (!a.active() && !Vector.vectorMovingWith(a, normal)) {
+//			normalForce.setMagnitude(m.getMass()*Vector.getComponentParallel(a, normal));
+//			normalForce.setDirection(normal.getDirection());
 //			outputForce.addVector(normalForce);
-			}
-		}	
-	}
+//			}
+//		}	
+//	}
 }

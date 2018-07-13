@@ -22,9 +22,6 @@ public class Vector {
 		if (components.length != DIMENSIONS) {
 			throw new MalformedVectorException("Vector created with wrong dimensions");
 		}
-		for (double cmpnt : components) {
-			cmpnt =(Math.round(cmpnt*10000.0))/10000.0;
-		}
 		this.components = components;
 	}
 	public double[] getComponents() {
@@ -54,7 +51,7 @@ public class Vector {
 			check += direction[i]*direction[i];
 			output[i] = magnitude * direction[i];
 		}
-		if (check<0.99||check>1.01) {//technically, should equal 1, but slight rounding errors, working with irrational numbers.
+		if (check<0.98||check>1.02) {//technically, should equal 1, but slight rounding errors, working with irrational numbers.
 			throw new MalformedVectorException("attempt to set direction to non-unit vector");
 		}
 		setComponents(output);
@@ -64,12 +61,11 @@ public class Vector {
 		for (double cmpnt:getComponents()) {
 			sum += cmpnt * cmpnt;
 		}
-		return (Math.round(Math.sqrt(sum)*10000.0))/10000.0;
+		return Math.sqrt(sum);
 	}
 	public void setMagnitude(double magnitude) throws MalformedVectorException { //WARNING: If you lower speed to 0, then start moving again in terms of speed you /MUST/ set direction anew. Direction can't be stored when still.
 		double[] direction = getDirection();
 		double[] cmpnts = new double[DIMENSIONS];
-		magnitude = (Math.round(magnitude*10000.0))/10000.0;
 		for (int i = 0; i < DIMENSIONS; i++) {
 			cmpnts[i] = Math.abs(magnitude) * direction[i];
 		}

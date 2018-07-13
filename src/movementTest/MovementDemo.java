@@ -15,6 +15,7 @@ import movement.CollisionEngine;
 import movement.Entity;
 import movement.Entity.MalformedEntityException;
 import movement.GameListener;
+import movement.Vectors.Force;
 import movement.Vectors.Vector;
 import movement.Vectors.Vector.MalformedVectorException;
 import paintedPanel.PaintedPanel;
@@ -59,20 +60,21 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		playerLabel.bgImage = new ImageIcon(player.getSprite());
 		tickTimer = new Timer(10, this);
 		collisionCheck = new CollisionEngine();
-		player.setPosition(new float[] {-10,50,50});
-		playerLabel.setBounds(-20, 50, 50, 50);
+		player.setPosition(new float[] {100,125,50});
+		playerLabel.setBounds(100, 150, 50, 50);
 		chaserLabel = new PaintedPanel();
 		chaserLabel.setOpaque(false);
 		chaser = new ChaserEnemy(this);
-		chaser.setPosition(new float[] {400,400,50});
+		chaser.setPosition(new float[] {200,325,50});
 		chaserLabel.bgImage = new ImageIcon(chaser.getSprite());
-		chaserLabel.setBounds(100, 49, 50, 50);
+		chaserLabel.setBounds(200, 49, 50, 50);
 		chaserLabel2 = new PaintedPanel();
 		chaserLabel2.setOpaque(false);
 		chaser2 = new ChaserEnemy(this);
-		chaser2.setPosition(new float[] {400,500,50});
+		chaser2.setPosition(new float[] {300,325,50});
 		chaserLabel2.bgImage = new ImageIcon(chaser2.getSprite());
 		chaserLabel2.setBounds(100, 49, 50, 50);
+		chaser2.setMass(1);
 		longWallLLabel = new PaintedPanel();
 		longWallRLabel = new PaintedPanel();
 		wideWallTLabel = new PaintedPanel();
@@ -83,7 +85,7 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		wideWallBLabel.setOpaque(false);
 		longWallLLabel.setBounds(0,0, 20, 600);
 		longWallRLabel.setBounds(580,0, 20, 600);
-		wideWallTLabel.setBounds(0,0, 600, 20);
+		wideWallTLabel.setBounds(0,300, 600, 20);
 		wideWallBLabel.setBounds(0,580, 600, 20);
 		longWallL = new TestWall(new Vector(1, new double[] {1,0,0}));
 		longWallR = new TestWall(new Vector(1, new double[] {-1,0,0}));
@@ -91,7 +93,7 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		wideWallB = new TestWall(new Vector(1, new double[] {0,-1,0}));
 		longWallL.setPosition(new float[] {0,0,-35000});
 		longWallR.setPosition(new float[] {580,0,-35000});
-		wideWallT.setPosition(new float[] {0,0,-35000});
+		wideWallT.setPosition(new float[] {0,300,-35000});
 		wideWallB.setPosition(new float[] {0,580,-35000});
 		longWallL.loadLongImage();
 		longWallR.loadLongImage();
@@ -139,6 +141,8 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		} else if (e.getKeyCode() == KeyEvent.VK_P) {
 			try {
 				player.stop();
+				chaser.stop();
+				chaser2.stop();
 			} catch (MalformedVectorException e1) {
 				e1.printStackTrace();
 			}
@@ -177,12 +181,9 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		counter ++;
 		try {
 		if ((rightKey || leftKey || upKey || downKey) && calculateDirection() != null) {
-			player.locomote(calculateDirection());
+			chaser2.locomote(calculateDirection());
 		} 
-//		double tmp = 0;
-//		for (int i=0;i<3;i++) {
-//		tmp += Math.pow(player.getVelocity().getMagnitude(),2) + Math.pow(chaser.getVelocity().getMagnitude(),2) + Math.pow(chaser2.getVelocity().getMagnitude(),2);
-//		}System.out.println(tmp);
+//		System.out.println(player.getMass() *Math.pow(player.getVelocity().getMagnitude(),2) + chaser.getMass() * Math.pow(chaser.getVelocity().getMagnitude(),2) + chaser2.getMass() * Math.pow(chaser2.getVelocity().getMagnitude(),2));
 		player.tick();
 		chaser.tick();
 		chaser2.tick();

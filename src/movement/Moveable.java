@@ -137,12 +137,14 @@ public abstract class Moveable extends Entity implements Collidable{
 		Acceleration tmp;
 		while (iter.hasNext()) {	
 			tmp = iter.next();
-			if (tmp.active()) { 
-				acc.addVector(tmp);
-				tmp.deactivate();
-			}else {
-				iter.remove();
-			}
+			acc.addVector(tmp);
+			iter.remove();
+//			if (tmp.active()) { 
+//				acc.addVector(tmp);
+//				tmp.deactivate();
+//			}else {
+//				iter.remove();
+//			}
 		}
 		accelerate(acc);
 		if (getVelocity().getMagnitude() < 0.05) {

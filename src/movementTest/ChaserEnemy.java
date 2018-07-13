@@ -16,9 +16,9 @@ import movement.Vectors.Vector.MalformedVectorException;
 public class ChaserEnemy extends Enemy{
 
 	static final double MASS = 10;
-	static final double BASEMOVEFORCE = 40;
-	static final double COEFFICIENT_OF_RESTITUTION = 1;	
-	static final double COEFFICIENT_OF_DRAG = 0.05;			
+	static final double BASEMOVEFORCE = 100;
+	static final double COEFFICIENT_OF_RESTITUTION = 0.1;	
+	static final double COEFFICIENT_OF_DRAG = 0.005;			
 	static final double  COEFFICIENT_OF_FRICTION = 0.5; 
 	
 	public ChaserEnemy(GameListener listener) throws MalformedEntityException, MalformedVectorException {

@@ -13,7 +13,7 @@ public class TestWall extends Wall{
 	
 	public TestWall(Vector angle) {
 		setNormal (angle);
-		setBounciness(0);
+		setBounciness(1);
 	}
 	
 	public void loadLongImage() throws MalformedEntityException {

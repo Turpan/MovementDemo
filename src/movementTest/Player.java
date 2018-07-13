@@ -14,7 +14,7 @@ import movement.Vectors.Vector.MalformedVectorException;
 
 public class Player extends SelfPropelled implements Dashing {
 
-	static final double MASS =10;
+	static final double MASS =5;
 	static final double BASEMOVEFORCE =100;
 	static final double COEFFICIENT_OF_RESTITUTION = 1;	//'bounciness' Used for collisions. See Controllable. Not the whole story, as I've attempted to disallow objects enterring other objects, regardless of CoR
 	static final double COEFFICIENT_OF_DRAG = 0.00;			//coefficient of proportionality between quadratic drag and speed
